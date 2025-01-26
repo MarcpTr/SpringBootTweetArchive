@@ -15,7 +15,7 @@ This project uses MySQL as the database management system. To configure the data
 Configuration in **application.properties**
 Make sure that the src/main/resources/application.properties file contains the correct database configuration:
 
-# Configuración de la base de datos MySQL
+# MySQL database configuration
 
     spring.datasource.url=jdbc:mysql://localhost:3306/DATABASENAME?serverTimezone=GMT&useLegacyDatetimeCode=false
 	spring.datasource.username=YOUR_NAME
