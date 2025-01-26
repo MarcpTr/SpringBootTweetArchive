@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>View Collection</title>
+    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</head>
+<body>
+<h1 th:text="${collection.name}"></h1>
+<ul>
+    <li th:each="tweet : ${collection.tweets}" th:if="${collection.tweets != null and !#lists.isEmpty(collection.tweets)}">
+        <blockquote class="twitter-tweet"> <a  th:href="${tweet.tweet}">Loading tweet</a ></blockquote>
+    </li>
+    <li th:if="${collection.tweets == null or #lists.isEmpty(collection.tweets)}">
+        <p>No tweets available.</p>  <!-- Mensaje cuando no hay tweets -->
+    </li>
+</ul>
+<form  th:action="@{/collection/{id}/add-tweet(id=${collection.id})}" method="post">
+    <input type="text" name="tweetLink" placeholder="Add tweet" required/>
+    <button type="submit">Add Tweet</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Collections</title>
+</head>
+<body>
+<h1>Collections</h1>
+<ul>
+    <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
+        <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
+
+    </li>
+    <li th:if="${collections == null or #lists.isEmpty(collections)}">
+        <p>No collections available.</p>
+    </li>
+</ul>
+</body>
+</html>
