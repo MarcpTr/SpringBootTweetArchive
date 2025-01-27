@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Collection;
 import com.example.demo.repository.CollectionRepository;
 import com.example.demo.service.CollectionService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.lang.module.ResolutionException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class CollectionController {
 
      @GetMapping("/collection/{collectionId}")
     public String viewCollection(@PathVariable Long collectionId, Model model){
-        Collection collection= collectionRepository.findById(collectionId).orElseThrow(() -> new RuntimeException("Collection not found"));
+        Collection collection= collectionRepository.findById(collectionId).orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
          collection.setLastVisitedAt(new Timestamp(System.currentTimeMillis()));
          collectionRepository.save(collection);
 
