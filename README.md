@@ -41,4 +41,24 @@ Make sure that the src/main/resources/application.properties file contains the c
 |tweet|`TEXT`            |tweet link            |
 |created_at|`INT`|Date of tweet creation|
 |`collection_id`|`TIMESTAMP`|ID of the collection to which the tweet belongs.|
+## Project Paths
+### Routes available to interact with tweets and collections:
+#### **1. List Collections**
+- Path**: `/`
+- **Method**: `GET`.
+- **Description**: Displays a list of all collections of tweets.
+- **Response**: An HTML view that lists all existing collections.
+  #### **2. View Collection (with tweets)**
 
+- Path**: `/collection/{id}`.
+- Method**: `GET`.
+- **Description**: Displays tweets from a specific collection.
+- **Parameters**: `id` - ID of the group of tweets.
+- **Response**: An HTML view that displays the tweets associated with a collection.
+- #### **3. Add a Tweet to a Group**
+
+- Path**: `/collection/{id}/add-tweet`.
+- Method**: `POST`.
+- **Description**: Allows adding a tweet to a specific collection.
+- **Parameters**: `id` - ID of the collection to which the tweet will be added.
+- **Form body**: Link of the tweet to be added.
