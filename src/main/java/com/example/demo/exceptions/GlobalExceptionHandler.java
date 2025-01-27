@@ -1,15 +1,10 @@
-package com.example.demo.controller;
+package com.example.demo.exceptions;
 
-import com.example.demo.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.HashMap;
-import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -19,4 +14,5 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorMessage", ex.getMessage());
         return "collection-not-found";
     }
+
 }
