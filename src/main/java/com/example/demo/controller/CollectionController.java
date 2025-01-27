@@ -2,10 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.model.Collection;
+import com.example.demo.model.User;
 import com.example.demo.repository.CollectionRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.lang.module.ResolutionException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -23,6 +26,9 @@ public class CollectionController {
     private CollectionService collectionService;
     @Autowired
     private CollectionRepository collectionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
     @GetMapping("/")
     public String listCollection(Model model){
@@ -36,8 +42,13 @@ public class CollectionController {
         return "createCollection";
     }
     @PostMapping("/create-collection")
-    public String createGroup(@RequestParam String collectionName){
-        Collection collection= collectionService.createCollection(collectionName);
+    public String createCollection(@RequestParam String collectionName){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        String username= authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Collection collection= collectionService.createCollection(collectionName,user);
+
         return "redirect:/collection/" +collection.getId();
     }
 

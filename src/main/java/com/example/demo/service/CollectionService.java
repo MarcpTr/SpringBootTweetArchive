@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.Collection;
 import com.example.demo.model.Tweet;
+import com.example.demo.model.User;
 import com.example.demo.repository.CollectionRepository;
 import com.example.demo.repository.TweetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,12 @@ public class CollectionService {
     @Autowired
     private TweetRepository tweetRepository;
 
-    public Collection createCollection(String collectionName){
+    public Collection createCollection(String collectionName, User user){
         Collection collection= new Collection();
         collection.setName(collectionName);
         collection.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         collection.setLastVisitedAt(new Timestamp(System.currentTimeMillis()));
+        collection.setUser(user);
         return collectionRepository.save(collection);
     }
     public void addTweetToCollection(String tweetLink, Collection collection) {

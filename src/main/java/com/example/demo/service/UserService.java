@@ -21,7 +21,7 @@ public class UserService implements UserDetailsService {
 
     public User registerUser(String username, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new RuntimeException("Usuario ya existe");
+            throw new RuntimeException("User already exist");
         }
         User user = new User();
         user.setUsername(username);
@@ -31,7 +31,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not fount"));
         org.springframework.security.core.userdetails.User.UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(username);
         builder.password(user.getPassword());
         builder.roles("USER"); // Asigna un rol predeterminado
