@@ -34,10 +34,10 @@ public class CollectionService {
     public void checkAndDeleteOldCollections() {
         long oneYearInMillis = 365 * 24 * 60 * 60 * 1000L;
         Timestamp oneYearAgo = new Timestamp(System.currentTimeMillis() - oneYearInMillis);
-        List<Collection> oldGroups = collectionRepository.findByLastVisitedAtBefore(oneYearAgo);
+        List<Collection> oldCollections = collectionRepository.findByLastVisitedAtBefore(oneYearAgo);
 
-        for (Collection group : oldGroups) {
-            collectionRepository.delete(group);
+        for (Collection collections : oldCollections) {
+            collectionRepository.delete(collections);
         }
     }
 }
