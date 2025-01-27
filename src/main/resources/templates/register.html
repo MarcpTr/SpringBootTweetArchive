@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/register" method="post">
+    <input name="username">
+    <input name="password">
+    <input type="submit" value="Submit">
+</form>
+
+<p th:if="${error != null}" style="color: red;">[[${error}]]</p>
+<p>¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>.</p>
+</body>
+</html>
