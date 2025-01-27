@@ -1,12 +1,12 @@
 
 # SpringBootTweetArchive
-A Spring Boot and MySQL-based web app that allows users to share tweets in groups, with automatic deletion of inactive groups after one year.
+A Spring Boot and MySQL-based web app that allows users to share tweets in collections, with automatic deletion of inactive collections after one year.
 
 
 ## Features
 
  - **Organization by collections**: Users can store tweets in collections.
- - **Relational Database**: Uses MySQL to manage the data of  tweets and groups.
+ - **Relational Database**: Uses MySQL to manage the data of  tweets and collections.
  - **Automatic Removal of Inactive Collections**: Collections that have had no visits or interaction for a year are automatically deleted.
   
 ## Database Connection
@@ -48,14 +48,14 @@ Make sure that the src/main/resources/application.properties file contains the c
 - **Method**: `GET`.
 - **Description**: Displays a list of all collections of tweets.
 - **Response**: An HTML view that lists all existing collections.
-  #### **2. View Collection (with tweets)**
+#### **2. View Collection (with tweets)**
 
 - Path**: `/collection/{id}`.
 - Method**: `GET`.
 - **Description**: Displays tweets from a specific collection.
-- **Parameters**: `id` - ID of the group of tweets.
+- **Parameters**: `id` - ID of the collection of tweets.
 - **Response**: An HTML view that displays the tweets associated with a collection.
-- #### **3. Add a Tweet to a Group**
+#### **3. Add a Tweet to a Collection**
 
 - Path**: `/collection/{id}/add-tweet`.
 - Method**: `POST`.
