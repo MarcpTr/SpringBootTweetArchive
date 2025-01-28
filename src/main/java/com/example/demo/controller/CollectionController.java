@@ -58,7 +58,16 @@ public class CollectionController {
          collection.setLastVisitedAt(new Timestamp(System.currentTimeMillis()));
          collectionRepository.save(collection);
 
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         String username = authentication.getName();
+
+         User user = userRepository.findByUsername(username)
+                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+         boolean isCreator = collection.getUser().getId().equals(user.getId());
+         model.addAttribute("isCreator", isCreator);
          model.addAttribute("collection", collection);
+
          return "viewCollection";
      }
 

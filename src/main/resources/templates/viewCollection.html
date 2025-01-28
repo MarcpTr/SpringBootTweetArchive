@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:c="http://www.w3.org/1999/XSL/Transform">
 <head>
     <meta charset="UTF-8">
     <title>View Collection</title>
@@ -7,10 +7,12 @@
 </head>
 <body>
 <h1 th:text="${collection.name}"></h1>
-<form  th:action="@{/collection/{id}/add-tweet(id=${collection.id})}" method="post">
+
+<form  th:if="${isCreator}" th:action="@{/collection/{id}/add-tweet(id=${collection.id})}" method="post">
     <input type="text" name="tweetLink" placeholder="Add tweet" required/>
     <button type="submit">Add Tweet</button>
 </form>
+
 <ul>
     <li th:each="tweet : ${collection.tweets}" th:if="${collection.tweets != null and !#lists.isEmpty(collection.tweets)}">
         <blockquote class="twitter-tweet"> <a  th:href="${tweet.tweet}">Loading tweet</a ></blockquote>
