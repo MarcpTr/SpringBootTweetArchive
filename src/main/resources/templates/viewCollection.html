@@ -18,12 +18,14 @@
 
 <ul>
     <li th:each="tweet : ${collection.tweets}" th:if="${collection.tweets != null and !#lists.isEmpty(collection.tweets)}">
-        <blockquote class="twitter-tweet"> <a  th:href="${tweet.tweet}">Loading tweet</a ></blockquote>
+        <blockquote class="twitter-tweet"> <a  th:href="'https://twitter.com/user/status/' + ${tweet.tweet.substring(tweet.tweet.lastIndexOf('/') + 1)}">Loading tweet</a ></blockquote>
     </li>
+
     <li th:if="${collection.tweets == null or #lists.isEmpty(collection.tweets)}">
         <p>No tweets available.</p>  <!-- Mensaje cuando no hay tweets -->
     </li>
 </ul>
+
 <script>
     function isTweetUrl(url) {
         const tweetUrlRegex = /^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+|(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$/;
