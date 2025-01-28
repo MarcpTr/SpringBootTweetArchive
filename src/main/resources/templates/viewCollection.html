@@ -8,10 +8,13 @@
 <body>
 <h1 th:text="${collection.name}"></h1>
 
-<form  th:if="${isCreator}" th:action="@{/collection/{id}/add-tweet(id=${collection.id})}" method="post">
-    <input type="text" name="tweetLink" placeholder="Add tweet" required/>
+<form  id="tweetForm" th:if="${isCreator}">
+    <input id="tweetUrl" type="text" name="tweetLink" placeholder="Add tweet" required/>
     <button type="submit">Add Tweet</button>
 </form>
+
+<p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
+<p id="success-message" style="color: green; display: none;"></p>
 
 <ul>
     <li th:each="tweet : ${collection.tweets}" th:if="${collection.tweets != null and !#lists.isEmpty(collection.tweets)}">
@@ -21,6 +24,53 @@
         <p>No tweets available.</p>  <!-- Mensaje cuando no hay tweets -->
     </li>
 </ul>
+<script>
+    function isTweetUrl(url) {
+        const tweetUrlRegex = /^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+|(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$/;
+        return tweetUrlRegex.test(url);
+    }
 
+    const form = document.getElementById('tweetForm');
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const urlInput = document.getElementById('tweetUrl').value;
+        const urlEndpoint = "/collection/" + [[${collection.id}]] + "/add-tweet";
+
+        if (isTweetUrl(urlInput)) {
+            console.log('URL válida:', urlInput);
+            errorMessage.style.display = 'none';
+             fetch(urlEndpoint, {
+            method: 'POST',
+            headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+            },
+    body: new URLSearchParams({
+        tweetLink: urlInput
+    }).toString(),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                successMessage.textContent = data.message;
+                successMessage.style.display = 'block';
+                location.reload(true);
+            } else {
+                errorMessage.textContent = data.message;
+                errorMessage.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error while sending the URL:', error);
+            errorMessage.textContent = "There was an unexpected error while processing the application.";
+            errorMessage.style.display = 'block';
+        });
+        } else {
+            errorMessage.style.display = 'block';
+        }
+    });
+</script>
 </body>
 </html>

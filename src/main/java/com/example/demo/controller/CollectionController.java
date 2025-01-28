@@ -6,7 +6,10 @@ import com.example.demo.model.User;
 import com.example.demo.repository.CollectionRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CollectionService;
+import com.example.demo.util.TweetLinkValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class CollectionController {
@@ -72,20 +77,27 @@ public class CollectionController {
      }
 
      @PostMapping("/collection/{collectionId}/add-tweet")
-    public String addTweetToCollection(@PathVariable Long collectionId, @RequestParam String tweetLink){
+    public ResponseEntity<Map<String, Object>> addTweetToCollection(@PathVariable Long collectionId, @RequestParam String tweetLink){
+         Map<String, Object> response = new HashMap<>();
+
+        if(TweetLinkValidator.isTweetUrl(tweetLink)){
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
          String username = authentication.getName();
-
          User user = userRepository.findByUsername(username)
                  .orElseThrow(() -> new RuntimeException("User not found"));
-
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(() -> new RuntimeException("Collection not found"));
         if(user.getId().equals(collection.getUser().getId())){
             collectionService.addTweetToCollection(tweetLink, collection);
-            return "redirect:/collection/" + collectionId;
-         }
-         return "redirect:/error";
+            response.put("status", "success");
+            response.put("message", "OK");
 
+            return ResponseEntity.ok(response);
+         }
+        }
+         response.put("status", "error");
+         response.put("message", "Something went wrong: ");
+
+         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
      }
 
     @Scheduled(cron="0 0 0 * * ?")
