@@ -73,9 +73,19 @@ public class CollectionController {
 
      @PostMapping("/collection/{collectionId}/add-tweet")
     public String addTweetToCollection(@PathVariable Long collectionId, @RequestParam String tweetLink){
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         String username = authentication.getName();
+
+         User user = userRepository.findByUsername(username)
+                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(() -> new RuntimeException("Collection not found"));
-         collectionService.addTweetToCollection(tweetLink, collection);
-         return "redirect:/collection/" + collectionId;
+        if(user.getId().equals(collection.getUser().getId())){
+            collectionService.addTweetToCollection(tweetLink, collection);
+            return "redirect:/collection/" + collectionId;
+         }
+         return "redirect:/error";
+
      }
 
     @Scheduled(cron="0 0 0 * * ?")
