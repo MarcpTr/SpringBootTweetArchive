@@ -1,13 +1,13 @@
 
-# SpringBootTweetArchive
-A Spring Boot and MySQL-based web app that allows users to share tweets in collections, with automatic deletion of inactive collections after one year.
 
+# SpringBootTweetArchive
+A web application based on Spring Boot and MySQL that allows users to save tweets in collections, they can choose whether to make it public or private.
 
 ## Features
 
  - **Organization by collections**: Users can store tweets in collections.
  - **Relational Database**: Uses MySQL to manage the data of  tweets and collections.
- - **Automatic Removal of Inactive Collections**: Collections that have had no visits or interaction for a year are automatically deleted.
+ - **Automatic deletion of inactive collections**: Collections that have not been visited or interacted with for a period of time to be determined are automatically deleted.
   
 ## Database Connection
 This project uses MySQL as the database management system. To configure the database connection, follow the steps below:
@@ -32,6 +32,8 @@ Make sure that the src/main/resources/application.properties file contains the c
 |Name|`varchar(25)`            |Collection name            |
 |created_at|`TIMESTAMP`|Date of collection creation|
 |`last_visited_at`|`TIMESTAMP`|Date of last collection visit|
+|`public`|`tinyint(1)`|can be seen by other users|
+|`user_id`|`int`|user foreign key|
 2. **Tweet**
  This table stores the information for each collection of tweets.
 
@@ -41,6 +43,14 @@ Make sure that the src/main/resources/application.properties file contains the c
 |tweet|`TEXT`            |tweet link            |
 |created_at|`INT`|Date of tweet creation|
 |`collection_id`|`TIMESTAMP`|ID of the collection to which the tweet belongs.|
+3. **User**
+ This table stores the information for each collection of tweets.
+
+|          Name      |Data type|Description                         |
+|----------------|-------------------------------|-----------------------------|
+|Id|`INT`            |'Unique identifier of the user|
+|username|`varchar(25)`            |user name|
+|passwpord|`varchar(100)`    |user password
 ## Project Paths
 ### Routes available to interact with tweets and collections:
 #### **1. List Collections**
