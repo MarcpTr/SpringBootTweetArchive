@@ -7,10 +7,13 @@
 <body>
 <h1>My Collections</h1>
 <p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
+<p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
+<p id="success-message" style="color: green; display: none;"></p>
 
 <ul>
     <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
         <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
+        <button onClick="removeCollection(this.id)" th:id="${collection.id}" >remove</button>
 
     </li>
     <li th:if="${collections == null or #lists.isEmpty(collections)}">
@@ -25,5 +28,35 @@
 
 <p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/create-collection">Create collection</a></p>
 <p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></p>
+<script>
+    const errorMessage = document.getElementById('error-message');
+const successMessage = document.getElementById('success-message');
+function removeCollection(collectionId){
+        const urlEndpoint = "/collection/" + collectionId + "/remove-collection";
+
+      fetch(urlEndpoint, {
+        method: 'DELETE',
+        headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            successMessage.textContent = data.message;
+            successMessage.style.display = 'block';
+            location.reload(true);
+        } else {
+            errorMessage.textContent = data.message;
+            errorMessage.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error while sending the URL:', error);
+        errorMessage.textContent = "There was an unexpected error while processing the application.";
+        errorMessage.style.display = 'block';
+    });
+}
+</script>
 </body>
 </html>

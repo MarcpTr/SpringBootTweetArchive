@@ -17,11 +17,21 @@ public class Collection {
     @Column(name = "last_visited_at")
     private Timestamp lastVisitedAt;
 
-    @OneToMany(mappedBy = "collection")
+    @OneToMany(mappedBy = "collection", cascade = CascadeType.REMOVE)
     private List<Tweet> tweets;
     @ManyToOne
     @JoinColumn(name = "user_id",  nullable = false)
     private User user;
+    @Column(name = "public")
+    private boolean isPublic;
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
 
     public User getUser() {
         return user;

@@ -40,7 +40,7 @@ public class CollectionController {
 
     @GetMapping("/")
     public String listCollection(Model model){
-        List<Collection> collections= collectionRepository.findAll();
+        List<Collection> collections= collectionRepository.findByIsPublic(true).orElseThrow();
         model.addAttribute("collections", collections);
         return "viewCollections";
     }
@@ -51,6 +51,7 @@ public class CollectionController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         List<Collection> collections= collectionRepository.findByUserId(user.getId()).orElseThrow();
+
         model.addAttribute("collections", collections);
         return "myCollections";
     }
@@ -130,7 +131,26 @@ public class CollectionController {
 
          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+    @DeleteMapping("/collection/{collectionId}/remove-collection")
+    public ResponseEntity<Map<String, Object>> removeCollection(@PathVariable Long collectionId){
+        Map<String, Object> response = new HashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Collection collection= collectionRepository.findById(collectionId).orElseThrow();
+        if(user.getId().equals(collection.getUser().getId())){
+            collectionRepository.delete(collection);
+            response.put("status", "success");
+            response.put("message", "OK");
+            return ResponseEntity.ok(response);
+        }
 
+        response.put("status", "error");
+        response.put("message", "Something went wrong: ");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
     @Scheduled(cron="0 0 0 * * ?")
     public void deleteOldCollections(){
         collectionService.checkAndDeleteOldCollections();
