@@ -101,7 +101,7 @@ public class CollectionController {
         if(user.getId().equals(collection.getUser().getId())){
             tweetService.addTweet(tweetLink, collection);
             response.put("status", "success");
-            response.put("message", "OK");
+            response.put("message", "Tweet added to collection");
             return ResponseEntity.ok(response);
          }
         }
@@ -122,7 +122,7 @@ public class CollectionController {
         if(user.getId().equals(collection.getUser().getId())){
             tweetRepository.delete(tweet);
             response.put("status", "success");
-            response.put("message", "OK");
+            response.put("message", "Tweet removed from collection");
             return ResponseEntity.ok(response);
         }
 
@@ -142,7 +142,7 @@ public class CollectionController {
         if(user.getId().equals(collection.getUser().getId())){
             collectionRepository.delete(collection);
             response.put("status", "success");
-            response.put("message", "OK");
+            response.put("message", "Collection removed");
             return ResponseEntity.ok(response);
         }
 
