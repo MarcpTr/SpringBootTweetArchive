@@ -8,7 +8,7 @@
 <h1>Collections</h1>
 <p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
 <p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
-
+<h2>Public Collections</h2>
 <ul>
     <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
         <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>

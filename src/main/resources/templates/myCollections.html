@@ -15,6 +15,7 @@
         <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
         <button onClick="removeCollection(this.id)" th:id="${collection.id}" >remove</button>
         <button onClick="changeVisibility(this.id)" th:id="${collection.id}" >Change Visibility</button>
+        <p th:text="${collection.isPublic ? 'Public' : 'Private'}"></p>
 
     </li>
     <li th:if="${collections == null or #lists.isEmpty(collections)}">
