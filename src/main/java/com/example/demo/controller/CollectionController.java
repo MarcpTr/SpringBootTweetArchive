@@ -61,12 +61,12 @@ public class CollectionController {
         return "createCollection";
     }
     @PostMapping("/create-collection")
-    public String createCollection(@RequestParam String collectionName){
+    public String createCollection(@RequestParam String collectionName,@RequestParam(defaultValue = "false")  boolean isPublic){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String username= authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Collection collection= collectionService.createCollection(collectionName,user);
+        Collection collection= collectionService.createCollection(collectionName,isPublic,user);
         return "redirect:/collection/" +collection.getId();
     }
 
@@ -83,10 +83,13 @@ public class CollectionController {
                      .orElseThrow(() -> new RuntimeException("User not found"));
              isCreator = collection.getUser().getId().equals(user.getId());
          }
-         model.addAttribute("isCreator", isCreator);
-         model.addAttribute("collection", collection);
+         if(collection.isPublic() || isCreator){
+             model.addAttribute("isCreator", isCreator);
+             model.addAttribute("collection", collection);
 
-         return "viewCollection";
+             return "viewCollection";
+         }
+        throw  new ResourceNotFoundException("Collection not found");
      }
 
      @PostMapping("/collection/{collectionId}/add-tweet")
@@ -143,6 +146,26 @@ public class CollectionController {
             collectionRepository.delete(collection);
             response.put("status", "success");
             response.put("message", "Collection removed");
+            return ResponseEntity.ok(response);
+        }
+
+        response.put("status", "error");
+        response.put("message", "Something went wrong: ");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+    @PutMapping("/collection/{collectionId}/change-visibility")
+    public ResponseEntity<Map<String, Object>> changeVisibility(@PathVariable Long collectionId){
+        Map<String, Object> response = new HashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Collection collection= collectionRepository.findById(collectionId).orElseThrow();
+        if(user.getId().equals(collection.getUser().getId())){
+            collectionService.updateIsPublic(collection);
+            response.put("status", "success");
+            response.put("message", "Visibility updated");
             return ResponseEntity.ok(response);
         }
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class CollectionService {
     @Autowired
@@ -18,15 +20,21 @@ public class CollectionService {
     @Autowired
     private TweetRepository tweetRepository;
 
-    public Collection createCollection(String collectionName, User user){
+    public Collection createCollection(String collectionName, boolean isPublic, User user){
         Collection collection= new Collection();
         collection.setName(collectionName);
+        collection.setPublic(isPublic);
         collection.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         collection.setLastVisitedAt(new Timestamp(System.currentTimeMillis()));
         collection.setUser(user);
         return collectionRepository.save(collection);
     }
 
+    public boolean updateIsPublic(Collection collection) {
+            collection.setPublic(!collection.isPublic());
+            collectionRepository.save(collection);
+            return true;
+    }
 
     public void checkAndDeleteOldCollections() {
         long oneYearInMillis = 365 * 24 * 60 * 60 * 1000L;
