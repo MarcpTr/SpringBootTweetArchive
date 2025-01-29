@@ -19,10 +19,11 @@
 <ul>
     <li th:each="tweet : ${collection.tweets}" th:if="${collection.tweets != null and !#lists.isEmpty(collection.tweets)}">
         <blockquote class="twitter-tweet"> <a  th:href="'https://twitter.com/user/status/' + ${tweet.tweet.substring(tweet.tweet.lastIndexOf('/') + 1)}">Loading tweet</a ></blockquote>
+        <button th:if="${isCreator}" onClick="removeTweet(this.id)" th:id="${tweet.id}" >remove</button>
     </li>
 
     <li th:if="${collection.tweets == null or #lists.isEmpty(collection.tweets)}">
-        <p>No tweets available.</p>  <!-- Mensaje cuando no hay tweets -->
+        <p>No tweets available.</p>
     </li>
 </ul>
 
@@ -73,6 +74,35 @@
             errorMessage.style.display = 'block';
         }
     });
+    function removeTweet(tweetId){
+            const urlEndpoint = "/collection/" + [[${collection.id}]] + "/remove-tweet";
+
+          fetch(urlEndpoint, {
+            method: 'DELETE',
+            headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+            },
+    body: new URLSearchParams({
+        tweetId: tweetId
+    }).toString(),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                successMessage.textContent = data.message;
+                successMessage.style.display = 'block';
+                location.reload(true);
+            } else {
+                errorMessage.textContent = data.message;
+                errorMessage.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error while sending the URL:', error);
+            errorMessage.textContent = "There was an unexpected error while processing the application.";
+            errorMessage.style.display = 'block';
+        });
+    }
 </script>
 </body>
 </html>

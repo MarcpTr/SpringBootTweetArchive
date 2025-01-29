@@ -6,6 +6,8 @@
 </head>
 <body>
 <h1>Collections</h1>
+<p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
+
 <ul>
     <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
         <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
@@ -15,7 +17,14 @@
         <p>No collections available.</p>
     </li>
 </ul>
-<p><a href="/create-collection">Create collection</a></p>
+<div th:if="${#authentication.principal == 'anonymousUser'}">
+    <p><a href="/login">Login</a></p>
+    <p><a href="/register">Register</a></p>
+
+</div>
+
+<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/create-collection">Create collection</a></p>
+<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></p>
 
 </body>
 </html>

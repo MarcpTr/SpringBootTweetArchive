@@ -26,13 +26,8 @@ public class CollectionService {
         collection.setUser(user);
         return collectionRepository.save(collection);
     }
-    public void addTweetToCollection(String tweetLink, Collection collection) {
-        Tweet tweet = new Tweet();
-        tweet.setTweet(tweetLink);
-        tweet.setCollection(collection);
-        tweet.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        tweetRepository.save(tweet);
-    }
+
+
     public void checkAndDeleteOldCollections() {
         long oneYearInMillis = 365 * 24 * 60 * 60 * 1000L;
         Timestamp oneYearAgo = new Timestamp(System.currentTimeMillis() - oneYearInMillis);
