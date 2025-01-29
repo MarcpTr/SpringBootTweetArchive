@@ -28,27 +28,27 @@ Make sure that the src/main/resources/application.properties file contains the c
 
 |          Name      |Data type|Description                         |
 |----------------|-------------------------------|-----------------------------|
-|Id|`INT`            |'Unique identifier of the collection            |
+|Id|`INT`            |Unique identifier of the collection            |
 |Name|`varchar(25)`            |Collection name            |
 |created_at|`TIMESTAMP`|Date of collection creation|
 |`last_visited_at`|`TIMESTAMP`|Date of last collection visit|
 |`public`|`tinyint(1)`|can be seen by other users|
 |`user_id`|`int`|user foreign key|
 2. **Tweet**
- This table stores the information for each collection of tweets.
+ This table stores the information for each tweet.
 
 |          Name      |Data type|Description                         |
 |----------------|-------------------------------|-----------------------------|
-|Id|`INT`            |'Unique identifier of the tweet|
+|Id|`INT`            |Unique identifier of the tweet|
 |tweet|`TEXT`            |tweet link            |
 |created_at|`INT`|Date of tweet creation|
 |`collection_id`|`TIMESTAMP`|ID of the collection to which the tweet belongs.|
 3. **User**
- This table stores the information for each collection of tweets.
+ This table stores the information for each user.
 
 |          Name      |Data type|Description                         |
 |----------------|-------------------------------|-----------------------------|
-|Id|`INT`            |'Unique identifier of the user|
+|Id|`INT`            |Unique identifier of the user|
 |username|`varchar(25)`            |user name|
 |passwpord|`varchar(100)`    |user password
 ## Project Paths
