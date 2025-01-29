@@ -44,6 +44,16 @@ public class CollectionController {
         model.addAttribute("collections", collections);
         return "viewCollections";
     }
+    @GetMapping("/my-collections")
+    public String listMyCollection(Model model){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        String username= authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        List<Collection> collections= collectionRepository.findByUserId(user.getId()).orElseThrow();
+        model.addAttribute("collections", collections);
+        return "myCollections";
+    }
     @GetMapping("/create-collection")
     public String createCollectionForm(Model model){
         model.addAttribute("collection", new Collection());

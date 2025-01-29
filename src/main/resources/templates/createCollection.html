@@ -1,13 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Create Collection</title>
 </head>
 <body>
+<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
+
 <form action="/create-collection" method="post">
     <input type="text" name="collectionName" placeholder="Collection Name" required/>
     <button type="submit">Create Collection</button>
 </form>
+
+<div th:if="${#authentication.principal == 'anonymousUser'}">
+    <p><a href="/login">Login</a></p>
+    <p><a href="/register">Register</a></p>
+
+</div>
+
+<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/create-collection">Create collection</a></p>
+<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></p>
+
 </body>
 </html>

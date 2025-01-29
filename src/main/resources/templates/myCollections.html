@@ -2,12 +2,11 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Collections</title>
+    <title>My Collections</title>
 </head>
 <body>
-<h1>Collections</h1>
+<h1>My Collections</h1>
 <p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
-<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
 
 <ul>
     <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
@@ -26,6 +25,5 @@
 
 <p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/create-collection">Create collection</a></p>
 <p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></p>
-
 </body>
 </html>
