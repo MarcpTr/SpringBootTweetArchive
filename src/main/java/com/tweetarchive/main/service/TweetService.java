@@ -1,8 +1,8 @@
-package com.example.demo.service;
+package com.tweetarchive.main.service;
 
-import com.example.demo.model.Collection;
-import com.example.demo.model.Tweet;
-import com.example.demo.repository.TweetRepository;
+import com.tweetarchive.main.model.Collection;
+import com.tweetarchive.main.model.Tweet;
+import com.tweetarchive.main.repository.TweetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.example.demo.exceptions;
+package com.tweetarchive.main.exceptions;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.ui.Model;

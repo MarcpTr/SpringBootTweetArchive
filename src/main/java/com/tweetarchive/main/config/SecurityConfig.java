@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.tweetarchive.main.config;
 
 
 import org.springframework.context.annotation.Bean;

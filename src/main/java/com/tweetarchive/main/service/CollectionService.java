@@ -1,16 +1,14 @@
-package com.example.demo.service;
+package com.tweetarchive.main.service;
 
-import com.example.demo.model.Collection;
-import com.example.demo.model.Tweet;
-import com.example.demo.model.User;
-import com.example.demo.repository.CollectionRepository;
-import com.example.demo.repository.TweetRepository;
+import com.tweetarchive.main.model.Collection;
+import com.tweetarchive.main.model.User;
+import com.tweetarchive.main.repository.CollectionRepository;
+import com.tweetarchive.main.repository.TweetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CollectionService {

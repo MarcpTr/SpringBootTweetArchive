@@ -1,15 +1,15 @@
-package com.example.demo.controller;
+package com.tweetarchive.main.controller;
 
-import com.example.demo.exceptions.ResourceNotFoundException;
-import com.example.demo.model.Collection;
-import com.example.demo.model.Tweet;
-import com.example.demo.model.User;
-import com.example.demo.repository.CollectionRepository;
-import com.example.demo.repository.TweetRepository;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.CollectionService;
-import com.example.demo.service.TweetService;
-import com.example.demo.util.TweetLinkValidator;
+import com.tweetarchive.main.exceptions.ResourceNotFoundException;
+import com.tweetarchive.main.model.Collection;
+import com.tweetarchive.main.model.Tweet;
+import com.tweetarchive.main.model.User;
+import com.tweetarchive.main.repository.CollectionRepository;
+import com.tweetarchive.main.repository.TweetRepository;
+import com.tweetarchive.main.repository.UserRepository;
+import com.tweetarchive.main.service.CollectionService;
+import com.tweetarchive.main.service.TweetService;
+import com.tweetarchive.main.util.TweetLinkValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

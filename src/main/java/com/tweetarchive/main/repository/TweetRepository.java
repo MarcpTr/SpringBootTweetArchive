@@ -1,7 +1,7 @@
-package com.example.demo.repository;
+package com.tweetarchive.main.repository;
 
-import com.example.demo.model.Collection;
-import com.example.demo.model.Tweet;
+import com.tweetarchive.main.model.Collection;
+import com.tweetarchive.main.model.Tweet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

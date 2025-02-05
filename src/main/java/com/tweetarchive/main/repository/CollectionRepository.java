@@ -1,6 +1,6 @@
-package com.example.demo.repository;
+package com.tweetarchive.main.repository;
 
-import com.example.demo.model.Collection;
+import com.tweetarchive.main.model.Collection;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Timestamp;
