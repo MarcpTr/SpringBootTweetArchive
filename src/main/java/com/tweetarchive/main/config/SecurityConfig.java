@@ -26,7 +26,11 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl("/")
+                        .deleteCookies("JSESSIONID", "remember-me")
+                ).rememberMe(remember -> remember
+                        .key("super-secret-key") // Clave para firmar las cookies
+                        .tokenValiditySeconds(604800).alwaysRemember(false)
                 );
 
         return http.build();
