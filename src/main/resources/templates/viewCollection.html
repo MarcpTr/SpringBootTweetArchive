@@ -6,6 +6,8 @@
     <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </head>
 <body>
+<div th:replace="fragments :: navbar"></div>
+
 <p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
 
 <h1 th:text="${collection.name}"></h1>
@@ -29,14 +31,7 @@
     </li>
 </ul>
 
-<div th:if="${#authentication.principal == 'anonymousUser'}">
-    <p><a href="/login">Login</a></p>
-    <p><a href="/register">Register</a></p>
 
-</div>
-
-<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/create-collection">Create collection</a></p>
-<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></p>
 
 <script>
     function isTweetUrl(url) {

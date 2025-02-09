@@ -1,0 +1,18 @@
+<!-- fragments.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="navbar">
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/create-collection">Create</a></li>
+      <li><a href="/my-collections">My collections</a></li>
+        <li th:if="${#authentication.principal == 'anonymousUser'}"><a href="/login">Login</a></li>
+        <li th:if="${#authentication.principal == 'anonymousUser'}"><a href="/register">Register</a></li>
+        <li th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+</div>
+</body>
+</html>

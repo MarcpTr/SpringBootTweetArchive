@@ -5,6 +5,8 @@
     <title>Create Collection</title>
 </head>
 <body>
+<div th:replace="fragments :: navbar"></div>
+
 <p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
 
 <form action="/create-collection" method="post">
@@ -19,8 +21,6 @@
 
 </div>
 
-<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/create-collection">Create collection</a></p>
-<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></p>
 
 </body>
 </html>
