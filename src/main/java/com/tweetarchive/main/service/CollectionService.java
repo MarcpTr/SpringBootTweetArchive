@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CollectionService {
@@ -27,7 +28,9 @@ public class CollectionService {
         collection.setUser(user);
         return collectionRepository.save(collection);
     }
-
+    public Optional<List<Collection>> findCollectionsByName(String name) {
+        return collectionRepository.searchByNameFuzzy("%" + name + "%");
+    }
     public boolean updateIsPublic(Collection collection) {
             collection.setPublic(!collection.isPublic());
             collectionRepository.save(collection);

@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class CollectionController {
@@ -91,7 +92,16 @@ public class CollectionController {
          }
         throw  new ResourceNotFoundException("Collection not found");
      }
-
+    @GetMapping("/search")
+    public String search(Model model,@RequestParam Optional<String> query){
+        String searchQuery = query.orElse("");
+        if(!searchQuery.equals("")) {
+            List<Collection> collections = collectionRepository.searchByNameFuzzy(searchQuery).orElseThrow(() -> new RuntimeException("Collection not found"));
+            model.addAttribute("collections", collections);
+            model.addAttribute("query", searchQuery);
+        }
+        return "search";
+    }
      @PostMapping("/collection/{collectionId}/add-tweet")
     public ResponseEntity<Map<String, Object>> addTweetToCollection(@PathVariable Long collectionId, @RequestParam String tweetLink){
          Map<String, Object> response = new HashMap<>();

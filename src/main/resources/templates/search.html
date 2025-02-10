@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Collections</title>
+</head>
+<body>
+<div th:replace="fragments :: navbar"></div>
+
+<h1>Search</h1>
+<p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
+<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
+<h2 th:if="${query}"  th:text="${query}"></h2>
+<form action="/search" method="get">
+    <input type="text" name="query" placeholder="Collection Name" required/>
+    <button type="submit">Search Collections</button>
+</form>
+<ul th:if="${query}" >
+    <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
+        <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
+    </li>
+    <li th:if="${collections == null or #lists.isEmpty(collections)}">
+        <p>No collections available.</p>
+    </li>
+</ul>
+</body>
+</html>
