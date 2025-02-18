@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface CollectionRepository extends JpaRepository<Collection, Long> {
     List<Collection> findByLastVisitedAtBefore(Timestamp timestamp);
-    @Query(value = "SELECT * FROM collection WHERE MATCH(name) AGAINST(:name IN NATURAL LANGUAGE MODE)", nativeQuery = true)
+    @Query(value = "SELECT * FROM collection WHERE MATCH(name) AGAINST(:name IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)  AND public = 1", nativeQuery = true)
     Optional<List<Collection>>  searchByNameFuzzy(@Param("name") String name);
     Optional<List<Collection>> findByUserId(Long id);
     Optional<List<Collection>> findByIsPublic(boolean isPublic);
