@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Collections</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body>
+<body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
 <div th:replace="fragments :: navbar"></div>
-
-<h1>Collections</h1>
-<p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
-<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
-<h2>Public Collections</h2>
-<ul>
-    <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
-        <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
-
-    </li>
-    <li th:if="${collections == null or #lists.isEmpty(collections)}">
-        <p>No collections available.</p>
-    </li>
-</ul>
-
+<main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
+    <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl">Public collections</h1>
+    <ul class="space-y-4">
+        <li  th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}" class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md ">
+            <a class="flex items-center h-full w-4/5 text-lg rounded-lg font-semibold text-blue-500  px-4 hover:text-blue-700 hover:bg-gray-200" th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
+            <a class="flex items-center h-full w-2/5 rounded-lg  text-sm text-gray-600 px-4 hover:text-gray-900 hover:bg-gray-200" th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
+        </li>
+    </ul>
+</main>
 </body>
 </html>

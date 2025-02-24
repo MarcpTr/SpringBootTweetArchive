@@ -3,24 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Collection</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
-<body>
+<body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
 <div th:replace="fragments :: navbar"></div>
+<main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
 
-<p th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></p>
+<h1 th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></h1>
 
-<form action="/create-collection" method="post">
-    <input type="text" name="collectionName" placeholder="Collection Name" required/>
-    <input type="checkbox" name="isPublic" placeholder="Is public" />
-    <button type="submit">Create Collection</button>
-</form>
+    <form action="/create-collection" method="post" class="flex flex-col items-center space-y-6 p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg">
+        <div class="w-full">
+            <label for="collectionName" class="block text-sm font-medium text-gray-700 mb-2">Collection Name</label>
+            <input type="text" id="collectionName" name="collectionName" placeholder="Enter collection name"
+                   class="w-full p-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   required />
+        </div>
 
-<div th:if="${#authentication.principal == 'anonymousUser'}">
-    <p><a href="/login">Login</a></p>
-    <p><a href="/register">Register</a></p>
+        <div class="w-full flex items-center space-x-2">
+            <input type="checkbox" id="isPublic" name="isPublic" class="h-5 w-5 text-blue-600 focus:ring-blue-500" />
+            <label for="isPublic" class="text-sm text-gray-700">Make this collection public</label>
+        </div>
 
-</div>
+        <button type="submit"
+                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
+            Create Collection
+        </button>
+    </form>
 
+</main>
 
 </body>
 </html>

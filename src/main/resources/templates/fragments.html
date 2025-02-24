@@ -3,17 +3,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="navbar">
-  <nav>
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/search">Search</a></li>
-      <li><a href="/create-collection">Create</a></li>
-      <li><a href="/my-collections">My collections</a></li>
-        <li th:if="${#authentication.principal == 'anonymousUser'}"><a href="/login">Login</a></li>
-        <li th:if="${#authentication.principal == 'anonymousUser'}"><a href="/register">Register</a></li>
-        <li th:if="${#authentication.principal != 'anonymousUser'}"><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
+  <header class="bg-blue-400 fixed bottom-0 w-full sm:w-fit h-16 sm:relative sm:top-0 sm:h-screen ">
+    <nav class="bg-blue-950 h-full flex  justify-evenly sm:h-screen sm:flex-col sm:justify-start sm:pt-16 sm:space-y-16 sm:w-16 2xl:w-44 2xl:justify-items-start 2xl:pl-2">
+      <a href="/" class="2xl:w-fit  text-2xl flex justify-center items-center" title="home" ><i class="fas fa-home  2xl:mr-4"></i> <span class="hidden text-xl 2xl:inline ">Home</span> </a>
+      <a href="/search" class="2xl:w-fit  text-2xl flex justify-center items-center" title="search" ><i class="fas fa-search 2xl:mr-4"></i> <span class="hidden text-xl 2xl:inline">Search</span> </a>
+      <a href="/my-collections" class="2xl:w-fit  text-2xl flex justify-center items-center" title="my collections"><i class="fas fa-file 2xl:mr-4"></i><span class="hidden text-xl 2xl:inline">Collections</span> </a>
+      <a href="/login" th:if="${#authentication.principal == 'anonymousUser'}" class="2xl:w-fit  text-2xl flex justify-center items-center" title="Login"><i class="fas fa-user 2xl:mr-4"></i><span class="hidden text-xl 2xl:inline"> Login </span> </a>
+      <a href="/register" th:if="${#authentication.principal == 'anonymousUser'}" class="2xl:w-fit  text-2xl flex justify-center items-center" title="Register"> <i class="fas fa-sign-in 2xl:mr-4"></i><span class="hidden text-xl 2xl:inline"> Register </span></a>
+      <a href="/create-collection" class="2xl:w-fit  text-2xl flex justify-center items-center" title="New collection"><i class="fas fa-plus 2xl:mr-4"></i> <span class="hidden text-xl 2xl:inline"> Create</span> </a>
+    </nav>
+  </header>
 </div>
 </body>
 </html>

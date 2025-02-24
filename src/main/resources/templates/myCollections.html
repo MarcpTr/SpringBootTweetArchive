@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>My Collections</title>
-</head>
-<body>
-<div th:replace="fragments :: navbar"></div>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<h1>My Collections</h1>
+</head>
+<body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
+<div th:replace="fragments :: navbar"></div>
+<main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
+    <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl">My Collections</h1>
 <p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
 <p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
 <p id="success-message" style="color: green; display: none;"></p>
 
-<ul>
-    <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
-        <a th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
-        <button onClick="removeCollection(this.id)" th:id="${collection.id}" >remove</button>
-        <button onClick="changeVisibility(this.id)" th:id="${collection.id}" >Change Visibility</button>
-        <p th:text="${collection.isPublic ? 'Public' : 'Private'}"></p>
-
-    </li>
-    <li th:if="${collections == null or #lists.isEmpty(collections)}">
-        <p>No collections available.</p>
+    <ul class="space-y-4">
+    <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}" class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md ">
+        <a class="flex items-center h-full w-4/5 text-lg rounded-lg font-semibold text-blue-500  px-4 hover:text-blue-700 hover:bg-gray-200" th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
+      <div class="flex row space-x-4 px-4">
+        <button onClick="removeCollection(this.id)" th:id="${collection.id}" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " >remove</button>
+        <button onClick="changeVisibility(this.id)" th:id="${collection.id}" ><i class="fas  2xl:mr-4" th:classappend="${collection.isPublic ? 'fa-eye' : 'fa-eye-slash'} "></i></button>
+        </div>
     </li>
 </ul>
+</main>
 <script>
     const errorMessage = document.getElementById('error-message');
 const successMessage = document.getElementById('success-message');

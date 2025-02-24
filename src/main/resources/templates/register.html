@@ -3,15 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-</head>
-<body>
-<form action="/register" method="post">
-    <input name="username">
-    <input name="password">
-    <input type="submit" value="Submit">
-</form>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<p th:if="${error != null}" style="color: red;">[[${error}]]</p>
-<p>¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>.</p>
+</head>
+<body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
+<div th:replace="fragments :: navbar"></div>
+
+<main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
+
+    <h1 th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></h1>
+
+    <form action="/register" method="post" class="flex flex-col items-center space-y-6 p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg">
+        <div class="w-full">
+            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+            <input type="text" id="username" name="username" placeholder="Username"
+                   class="w-full p-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   required />
+        </div>
+        <div class="w-full">
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <input type="password" id="password" name="password" placeholder="Password"
+                   class="w-full p-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   required />
+        </div>
+
+        <div class="w-full flex items-center space-x-2">
+            <input type="checkbox" name="remember-me" id="remember-me" class="h-5 w-5 text-blue-600 focus:ring-blue-500" >
+            <label for="remember-me" class="text-sm text-gray-700">Remember me</label>
+        </div>
+
+        <button type="submit"
+                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
+            Create user
+        </button>
+        <p th:if="${error != null}" style="color: red;">[[${error}]]</p>
+
+    </form>
+
+</main>
 </body>
 </html>
