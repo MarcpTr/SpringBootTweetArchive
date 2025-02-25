@@ -46,4 +46,10 @@ public class CollectionService {
             collectionRepository.delete(collections);
         }
     }
+
+    public Optional<List<Collection>> findByIsPublicandUserId(boolean isPublic, Long id) {
+        return collectionRepository.findByIsPublicAndUserId(isPublic, id);
+    }
+
+
 }

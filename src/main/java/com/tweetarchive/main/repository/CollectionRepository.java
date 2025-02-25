@@ -15,4 +15,5 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     Optional<List<Collection>>  searchByNameFuzzy(@Param("name") String name);
     Optional<List<Collection>> findByUserId(Long id);
     Optional<List<Collection>> findByIsPublic(boolean isPublic);
+    Optional<List<Collection>> findByIsPublicAndUserId(boolean isPublic, long userId);
 }
