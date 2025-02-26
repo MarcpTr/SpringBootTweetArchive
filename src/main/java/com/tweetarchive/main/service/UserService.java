@@ -30,6 +30,10 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(password));
         return userRepository.save(user);
     }
+    public Optional<User> findByUsername(String username){
+        return  userRepository.findByUsername(username);
+    }
+
     public Optional<User> findByUserId(long id){
         return  userRepository.findById(id);
     }

@@ -10,8 +10,7 @@
 <body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
 <div th:replace="fragments :: navbar"></div>
 <main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
-    <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl">My Collections</h1>
-<p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
+    <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl" th:if="${#authentication.principal != 'anonymousUser'}"><span th:text="${#authentication.name}"></span>'s Collections</h1>
 <p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
 <p id="success-message" style="color: green; display: none;"></p>
 

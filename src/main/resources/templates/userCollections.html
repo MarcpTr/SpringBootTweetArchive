@@ -10,14 +10,14 @@
 <body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
 <div th:replace="fragments :: navbar"></div>
 <main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
-    <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl">My Collections</h1>
-<p th:if="${#authentication.principal != 'anonymousUser'}">Welcome, <span th:text="${#authentication.name}"></span></p>
+    <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl" ><span th:text="${collections[0].user.username}"></span>'s collection</h1>
 <p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
 <p id="success-message" style="color: green; display: none;"></p>
 
     <ul class="space-y-4">
     <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}" class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md ">
         <a class="flex items-center h-full w-4/5 text-lg rounded-lg font-semibold text-blue-500  px-4 hover:text-blue-700 hover:bg-gray-200" th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
+        <a class="flex items-center h-full w-2/5 rounded-lg  text-sm text-gray-600 px-4 hover:text-gray-900 hover:bg-gray-200" th:href="@{/user/{id}(id=${collection.user.id})}" th:text="${collection.user.username}"></a>
     </li>
 </ul>
 </main>

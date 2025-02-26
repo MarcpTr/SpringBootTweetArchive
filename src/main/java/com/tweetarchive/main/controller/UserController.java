@@ -1,6 +1,5 @@
 package com.tweetarchive.main.controller;
 
-import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.service.CollectionService;
@@ -13,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.List;
 
 @Controller

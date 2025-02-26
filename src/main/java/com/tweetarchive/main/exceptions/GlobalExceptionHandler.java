@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public String handleResourceNotFound(ResourceNotFoundException ex, Model model, HttpServletResponse response) {
+    @ExceptionHandler(CollectionNotFoundException.class)
+    public String handleResourceNotFound(CollectionNotFoundException ex, Model model, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         model.addAttribute("errorMessage", ex.getMessage());
         return "collection-not-found";

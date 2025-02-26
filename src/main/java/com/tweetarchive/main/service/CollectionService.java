@@ -19,6 +19,9 @@ public class CollectionService {
     @Autowired
     private TweetRepository tweetRepository;
 
+    public Optional<List<Collection>> findPublicCollections(boolean visibility){
+        return collectionRepository.findByIsPublic(visibility);
+    }
     public Collection createCollection(String collectionName, boolean isPublic, User user){
         Collection collection= new Collection();
         collection.setName(collectionName);
@@ -28,6 +31,12 @@ public class CollectionService {
         collection.setUser(user);
         return collectionRepository.save(collection);
     }
+    public Optional<List<Collection>> findByUserId(long id) {
+        return collectionRepository.findByUserId(id);
+    }
+    public Optional<Collection> findById(long id) {
+        return collectionRepository.findById(id);
+    }
     public Optional<List<Collection>> findCollectionsByName(String name) {
         return collectionRepository.searchByNameFuzzy("%" + name + "%");
     }
@@ -36,7 +45,10 @@ public class CollectionService {
             collectionRepository.save(collection);
             return true;
     }
-
+    public void save(Collection collection)
+    {
+        collectionRepository.save(collection);
+    }
     public void checkAndDeleteOldCollections() {
         long oneYearInMillis = 365 * 24 * 60 * 60 * 1000L;
         Timestamp oneYearAgo = new Timestamp(System.currentTimeMillis() - oneYearInMillis);
@@ -52,4 +64,11 @@ public class CollectionService {
     }
 
 
+    public Optional<List<Collection>> searchByNameFuzzy(String searchQuery) {
+       return collectionRepository.searchByNameFuzzy(searchQuery);
+    }
+
+    public void delete(Collection collection) {
+        collectionRepository.delete(collection);
+    }
 }

@@ -13,7 +13,9 @@ import java.util.Optional;
 public class TweetService {
     @Autowired
     private TweetRepository tweetRepository;
-
+    public Optional<Tweet> findById(long id){
+        return tweetRepository.findById(id);
+    }
     public void addTweet(String tweetLink, Collection collection) {
         Optional<Tweet> tweetExistente= tweetRepository.findByTweetAndCollection(tweetLink, collection);
         if(tweetExistente.isPresent()){
@@ -24,5 +26,9 @@ public class TweetService {
         tweet.setCollection(collection);
         tweet.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         tweetRepository.save(tweet);
+    }
+
+    public void delete(Tweet tweet) {
+        tweetRepository.delete(tweet);
     }
 }

@@ -17,7 +17,7 @@
 <ul th:if="${query}"  class="space-y-4">
     <li class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md " th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
         <a class="flex items-center h-full w-4/5 text-lg rounded-lg font-semibold text-blue-500  px-4 hover:text-blue-700 hover:bg-gray-200" th:text="${collection.name}" th:href="@{/collection/{id}(id=${collection.id})}" ></a>
-        <a class="flex items-center h-full w-2/5 rounded-lg  text-sm text-gray-600 px-4 hover:text-gray-900 hover:bg-gray-200" th:text="${collection.name}" th:href="@{/collection/{id}(id=${collection.id})}"></a>
+        <a class="flex items-center h-full w-2/5 rounded-lg  text-sm text-gray-600 px-4 hover:text-gray-900 hover:bg-gray-200" th:href="@{/user/{id}(id=${collection.user.id})}" th:text="${collection.user.username}"></a>
     </li>
 </ul>
 </main>

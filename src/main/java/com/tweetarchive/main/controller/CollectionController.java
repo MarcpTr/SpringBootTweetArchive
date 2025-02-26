@@ -1,6 +1,6 @@
 package com.tweetarchive.main.controller;
 
-import com.tweetarchive.main.exceptions.ResourceNotFoundException;
+import com.tweetarchive.main.exceptions.CollectionNotFoundException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.model.User;
@@ -9,6 +9,7 @@ import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.repository.UserRepository;
 import com.tweetarchive.main.service.CollectionService;
 import com.tweetarchive.main.service.TweetService;
+import com.tweetarchive.main.service.UserService;
 import com.tweetarchive.main.util.TweetLinkValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,41 +32,35 @@ public class CollectionController {
     @Autowired
     private CollectionService collectionService;
     @Autowired
-    private CollectionRepository collectionRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TweetRepository tweetRepository;
+    private UserService userService;
     @Autowired
     private TweetService tweetService;
 
     @GetMapping("/")
-    public String listCollection(Model model){
-        List<Collection> collections= collectionRepository.findByIsPublic(true).orElseThrow();
+    public String listPublicCollections(Model model){
+        List<Collection> collections= collectionService.findPublicCollections(true).orElse(null);
         model.addAttribute("collections", collections);
         return "viewCollections";
     }
     @GetMapping("/my-collections")
-    public String listMyCollection(Model model){
+    public String listMyCollections(Model model){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String username= authentication.getName();
-        User user = userRepository.findByUsername(username)
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        List<Collection> collections= collectionRepository.findByUserId(user.getId()).orElseThrow();
-
+        List<Collection> collections= collectionService.findByUserId(user.getId()).orElse(null);
         model.addAttribute("collections", collections);
         return "myCollections";
     }
     @GetMapping("/create-collection")
     public String createCollectionForm(Model model){
-        model.addAttribute("collection", new Collection());
         return "createCollection";
     }
     @PostMapping("/create-collection")
     public String createCollection(@RequestParam String collectionName,@RequestParam(defaultValue = "false")  boolean isPublic){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String username= authentication.getName();
-        User user = userRepository.findByUsername(username)
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Collection collection= collectionService.createCollection(collectionName,isPublic,user);
         return "redirect:/collection/" +collection.getId();
@@ -74,29 +69,28 @@ public class CollectionController {
      @GetMapping("/collection/{collectionId}")
     public String viewCollection(@PathVariable Long collectionId, Model model){
          boolean isCreator=false;
-         Collection collection= collectionRepository.findById(collectionId).orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
-         collection.setLastVisitedAt(new Timestamp(System.currentTimeMillis()));
-         collectionRepository.save(collection);
+         Collection collection= collectionService.findById(collectionId).orElseThrow(() -> new CollectionNotFoundException("Collection not found"));
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
          if(authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"))){
              String username = authentication.getName();
-             User user = userRepository.findByUsername(username)
+             User user = userService.findByUsername(username)
                      .orElseThrow(() -> new RuntimeException("User not found"));
              isCreator = collection.getUser().getId().equals(user.getId());
          }
          if(collection.isPublic() || isCreator){
+             collection.setLastVisitedAt(new Timestamp(System.currentTimeMillis()));
+             collectionService.save(collection);
              model.addAttribute("isCreator", isCreator);
              model.addAttribute("collection", collection);
-
              return "viewCollection";
          }
-        throw  new ResourceNotFoundException("Collection not found");
+        throw  new CollectionNotFoundException("Collection not found");
      }
     @GetMapping("/search")
     public String search(Model model,@RequestParam Optional<String> query){
         String searchQuery = query.orElse("");
         if(!searchQuery.equals("")) {
-            List<Collection> collections = collectionRepository.searchByNameFuzzy(searchQuery).orElseThrow(() -> new RuntimeException("Collection not found"));
+            List<Collection> collections = collectionService.searchByNameFuzzy(searchQuery).orElseThrow(() -> new RuntimeException("Collection not found"));
             model.addAttribute("collections", collections);
             model.addAttribute("query", searchQuery);
         }
@@ -108,10 +102,10 @@ public class CollectionController {
         if(TweetLinkValidator.isTweetUrl(tweetLink)){
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
          String username = authentication.getName();
-         User user = userRepository.findByUsername(username)
+         User user = userService.findByUsername(username)
                  .orElseThrow(() -> new RuntimeException("User not found"));
-        Collection collection = collectionRepository.findById(collectionId).orElseThrow(() -> new RuntimeException("Collection not found"));
-        if(user.getId().equals(collection.getUser().getId())){
+        Collection collection = collectionService.findById(collectionId).orElse(null);
+        if( collection != null && user.getId().equals(collection.getUser().getId()) ){
             tweetService.addTweet(tweetLink, collection);
             response.put("status", "success");
             response.put("message", "Tweet added to collection");
@@ -128,12 +122,12 @@ public class CollectionController {
         Map<String, Object> response = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Tweet tweet=tweetRepository.findById(Long.parseLong(tweetId)).orElseThrow();
-        Collection collection= collectionRepository.findById(tweet.getCollection().getId()).orElseThrow();
+        Tweet tweet=tweetService.findById(Long.parseLong(tweetId)).orElseThrow(() -> new RuntimeException("Tweet not found"));
+        Collection collection= collectionService.findById(tweet.getCollection().getId()).orElseThrow(() -> new RuntimeException("Collection not found"));
         if(user.getId().equals(collection.getUser().getId())){
-            tweetRepository.delete(tweet);
+            tweetService.delete(tweet);
             response.put("status", "success");
             response.put("message", "Tweet removed from collection");
             return ResponseEntity.ok(response);
@@ -149,11 +143,11 @@ public class CollectionController {
         Map<String, Object> response = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Collection collection= collectionRepository.findById(collectionId).orElseThrow();
+        Collection collection= collectionService.findById(collectionId).orElseThrow();
         if(user.getId().equals(collection.getUser().getId())){
-            collectionRepository.delete(collection);
+            collectionService.delete(collection);
             response.put("status", "success");
             response.put("message", "Collection removed");
             return ResponseEntity.ok(response);
@@ -169,9 +163,9 @@ public class CollectionController {
         Map<String, Object> response = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Collection collection= collectionRepository.findById(collectionId).orElseThrow();
+        Collection collection= collectionService.findById(collectionId).orElseThrow(() -> new RuntimeException("Collection not found"));
         if(user.getId().equals(collection.getUser().getId())){
             collectionService.updateIsPublic(collection);
             response.put("status", "success");
