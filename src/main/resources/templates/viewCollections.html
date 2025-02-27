@@ -6,9 +6,9 @@
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
+<body class="flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
 <div th:replace="fragments :: navbar"></div>
-<main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
+<main class="h-screen flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
     <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl">Public collections <span th:if="${collections == null or #lists.isEmpty(collections)}" >not found</span></h1>
     <ul class="space-y-4">
         <li  th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}" class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md ">

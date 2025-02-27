@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
-<body class="bg-amber-50 sm:bg-amber-300 md:bg-orange-400 lg:bg-red-600 flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
+<body class=" flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
 <div th:replace="fragments :: navbar"></div>
-<main class="h-screen bg-red-400 flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
+<main class="h-screen  flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
 
 
-    <form action="/create-collection" method="post" class="flex flex-col items-center space-y-6 p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg">
+    <form action="/create-collection" method="post" class="flex flex-col items-center space-y-6 p-6 max-w-md mx-auto  shadow-lg rounded-lg">
         <div class="w-full">
             <label for="collectionName" class="block text-sm font-medium text-gray-700 mb-2">Collection Name</label>
             <input type="text" id="collectionName" name="collectionName" placeholder="Enter collection name"

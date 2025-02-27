@@ -30,6 +30,7 @@ public class UserController {
         List<Collection> collections= collectionService.findByIsPublicandUserId(true, user.getId()).orElseThrow();
 
         model.addAttribute("collections", collections);
+        model.addAttribute("username", user.getUsername());
         return "userCollections";
     }
 }
