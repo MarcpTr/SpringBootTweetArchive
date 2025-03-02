@@ -9,7 +9,7 @@ A web application based on Spring Boot and MySQL that allows users to save tweet
 
  - **Organization by collections**: Users can store tweets in collections.
  - **Relational Database**: Uses MySQL to manage the data of  tweets and collections.
- - **Automatic deletion of inactive collections**: Collections that have not been visited or interacted with for a period of time to be determined are automatically deleted.
+
   
 ## Database Connection
 This project uses MySQL as the database management system. To configure the database connection, follow the steps below:
