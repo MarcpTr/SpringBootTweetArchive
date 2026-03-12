@@ -4,6 +4,7 @@
 # SpringBootTweetArchive
 A web application based on Spring Boot and MySQL that allows users to save tweets in collections, they can choose whether to make it public or private.
 [LIVE APP](https://tweet-manager.marcpericot.es/)
+![](https://raw.githubusercontent.com/MarcpTr/SpringBootTweetArchive/main/tweet-manager.webp)
 
 ## Features
 
