@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Create Collection</title>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script defer src="https://analytics.marcpericot.es/script.js" data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
+  <meta charset="UTF-8">
+  <title>Create Collection</title>
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script defer src="https://analytics.marcpericot.es/script.js"
+    data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
 </head>
-<body class=" flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
-<div th:replace="fragments :: navbar"></div>
-<main class="h-screen  flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
 
+<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
 
-    <form action="/create-collection" method="post" class="flex flex-col items-center space-y-6 p-6 max-w-md mx-auto  shadow-lg rounded-lg">
-        <div class="w-full">
-            <label for="collectionName" class="block text-sm font-medium text-gray-700 mb-2">Collection Name</label>
-            <input type="text" id="collectionName" name="collectionName" placeholder="Enter collection name"
-                   class="w-full p-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   required />
-        </div>
+  <!-- Navbar -->
+  <div th:replace="fragments :: navbar"></div>
 
-        <div class="w-full flex items-center space-x-2">
-            <input type="checkbox" id="isPublic" name="isPublic" class="h-5 w-5 text-blue-600 focus:ring-blue-500" />
-            <label for="isPublic" class="text-sm text-gray-700">Make this collection public</label>
-        </div>
+  <main class="h-screen flex justify-center items-center w-full p-6 sm:overflow-y-auto">
 
-        <button type="submit"
-                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
-            Create Collection
-        </button>
+    <form action="/create-collection" method="post"
+      class="flex flex-col items-center space-y-6 p-8 max-w-md mx-auto bg-white shadow-2xl rounded-3xl border border-gray-200">
+
+      <h2 class="text-3xl font-extrabold text-gray-800 mb-4">Create Collection</h2>
+
+      <!-- Collection Name -->
+      <div class="w-full">
+        <label for="collectionName" class="block text-sm font-medium text-gray-700 mb-2">Collection Name</label>
+        <input type="text" id="collectionName" name="collectionName" placeholder="Enter collection name"
+          class="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          required autofocus />
+      </div>
+
+      <!-- Public Checkbox -->
+      <div class="w-full flex items-center space-x-3">
+        <input type="checkbox" id="isPublic" name="isPublic"
+          class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded" />
+        <label for="isPublic" class="text-sm text-gray-700">Make this collection public</label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit"
+        class="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
+        Create Collection
+      </button>
+
+      <!-- Optional Error Message -->
+      <p th:if="${error != null}" class="text-red-600 text-sm mt-2 text-center">[[${error}]]</p>
+
     </form>
 
-</main>
+  </main>
 
 </body>
+
 </html>

@@ -7,38 +7,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script defer src="https://analytics.marcpericot.es/script.js" data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
 </head>
-<body class="flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto">
-<div th:replace="fragments :: navbar"></div>
+<body class="flex flex-col-reverse sm:flex-row 2xl:w-7xl 2xl:mx-auto bg-gray-50">
 
-<main class="h-screen flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
+  <!-- Navbar -->
+  <div th:replace="fragments :: navbar"></div>
 
-    <h1 th:if="${#authentication.principal != 'anonymousUser'}"><a href="/my-collections">My collections</a></h1>
+  <main class="h-screen flex justify-center items-center w-full p-6 sm:overflow-y-auto">
 
-    <form action="/login" method="post" class="flex flex-col items-center space-y-6 p-6 max-w-md mx-auto bg-white shadow-lg rounded-lg">
-        <div class="w-full">
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-            <input type="text" id="username" name="username" placeholder="Username"
-                   class="w-full p-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   required />
-        </div>
-        <div class="w-full">
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input type="password" id="password" name="password" placeholder="Password"
-                   class="w-full p-3 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   required />
-        </div>
+    <form action="/login" method="post"
+          class="flex flex-col items-center space-y-6 p-10 max-w-md mx-auto bg-white shadow-2xl rounded-3xl border border-gray-200">
 
-        <div class="w-full flex items-center space-x-2">
-            <input type="checkbox" name="remember-me" id="remember-me" class="h-5 w-5 text-blue-600 focus:ring-blue-500" >
-            <label for="remember-me" class="text-sm text-gray-700">Remember me</label>
-        </div>
+      <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Login</h2>
 
-        <button type="submit"
-                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
-            Login
-        </button>
+      <!-- Username -->
+      <div class="w-full">
+        <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username"
+               class="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+               required autofocus />
+      </div>
+
+      <!-- Password -->
+      <div class="w-full">
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password"
+               class="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+               required />
+      </div>
+
+      <!-- Remember me & Forgot password -->
+      <div class="w-full flex justify-between items-center text-sm text-gray-600">
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="remember-me" id="remember-me" class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded">
+          <span>Remember me</span>
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit"
+              class="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
+        Login
+      </button>
+
+      <!-- Error message -->
+      <p th:if="${error != null}" class="text-red-600 text-sm mt-2 text-center">[[${error}]]</p>
+
+      <!-- Link to register -->
+      <p class="text-sm text-gray-500 mt-4 text-center">
+        Don't have an account? 
+        <a href="/register" class="text-blue-600 font-medium hover:underline">Register</a>
+      </p>
     </form>
 
-</main>
+  </main>
 </body>
 </html>

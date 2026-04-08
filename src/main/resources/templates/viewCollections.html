@@ -10,6 +10,12 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script defer src="https://analytics.marcpericot.es/script.js"
         data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
+    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <style>
+        .pointer-events-none {
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
@@ -24,31 +30,31 @@
             </a>
         </div>
         <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!--
-            <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}"
-                class="bg-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02]  transition p-5">
-                <a th:href="@{/collection/{id}(id=${collection.id})}" class="block">
-                    <h2 th:text="${collection.name}" class="text-xl font-bold text-gray-800"></h2>
-                    <p th:href="@{/user/{id}(id=${collection.user.id})}" th:text="${collection.user.username}"
-                        class="text-sm text-gray-500 mt-1"></p>
-
-                    <div class="mt-4 text-xs text-gray-400"
-                        th:text="${#lists.size(collection.tweets)} + ' tweets guardados'"></div>
-                </a>
-            </li>
--->
             <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}"
                 class="bg-white p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer">
                 <a th:href="@{/collection/{id}(id=${collection.id})}">
                     <h2 class="text-lg font-bold" th:text="${collection.name}"></h2>
-                    <a class="text-sm text-gray-500" th:href="@{/user/{id}(id=${collection.user.id})}"
-                        th:text="'by: ' + ${collection.user.username}"></a>
+                    <span class="text-sm text-gray-500" th:text="'by: ' + ${collection.user.username}"
+                        th:onclick="|window.location.href='@{/user/{id}(id=${collection.user.id})}'|">
+                    </span>
+                    <div class="mt-4 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
 
-                    <div
-                        class="mt-4 h-24 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-                        Preview
+                        <div class="tweet-wrapper relative"
+                            th:if="${!#lists.isEmpty(collection.tweets) and collection.tweets[0].tweet != null}">
+                            <blockquote class="twitter-tweet">
+                                <a
+                                    th:href="'https://twitter.com/user/status/' + ${collection.tweets[0].tweet.substring(collection.tweets[0].tweet.lastIndexOf('/') + 1)}">
+                                    Loading preview
+                                </a>
+                            </blockquote>
+                            <!-- Overlay invisible -->
+                            <a th:href="@{/collection/{id}(id=${collection.id})}" class="absolute inset-0 z-10"></a>
+                        </div>
+                        <span th:if="${#lists.isEmpty(collection.tweets) or collection.tweets[0].tweet == null}"
+                            class="text-gray-400 text-sm">
+                            No preview
+                        </span>
                     </div>
-
                     <div class="mt-4 flex justify-between text-xs text-gray-400">
                         <span th:text="${#lists.size(collection.tweets)} + ' tweets'"></span>
                         <span>#dev</span>
