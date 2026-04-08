@@ -15,10 +15,24 @@
 <p id="success-message" style="color: green; display: none;"></p>
 
     <ul class="space-y-4">
-    <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}" class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md ">
-        <a class="flex items-center h-full w-4/5 text-lg rounded-lg font-semibold text-blue-500  px-4 hover:text-blue-700 hover:bg-gray-200" th:href="@{/collection/{id}(id=${collection.id})}" th:text="${collection.name}"></a>
-        <a class="flex items-center h-full w-2/5 rounded-lg  text-sm text-gray-600 px-4 hover:text-gray-900 hover:bg-gray-200" th:href="@{/user/{id}(id=${collection.user.id})}" th:text="${collection.user.username}"></a>
-    </li>
+     <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}"
+                class="bg-white p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer">
+                <a th:href="@{/collection/{id}(id=${collection.id})}">
+                    <h2 class="text-lg font-bold" th:text="${collection.name}"></h2>
+                    <a class="text-sm text-gray-500" th:href="@{/user/{id}(id=${collection.user.id})}"
+                        th:text="'by: ' + ${collection.user.username}"></a>
+
+                    <div
+                        class="mt-4 h-24 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-sm">
+                        Preview
+                    </div>
+
+                    <div class="mt-4 flex justify-between text-xs text-gray-400">
+                        <span th:text="${#lists.size(collection.tweets)} + ' tweets'"></span>
+                        <span>#dev</span>
+                    </div>
+                </a>
+            </li>
 </ul>
 </main>
 </body>
