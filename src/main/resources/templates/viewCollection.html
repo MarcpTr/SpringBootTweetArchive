@@ -23,21 +23,24 @@
             <h1 class="text-3xl font-bold" th:text="${collection.name}"></h1>
             <p class="text-gray-500">
                 Collection by
-                <a th:href="@{/user/{id}(id=${collection.user.id})}" th:text="${collection.user.username}"
+                <a th:href="@{/user/{username}(username=${collection.username})}" th:text="${collection.username}"
                     class="text-blue-500 hover:underline">
                 </a>
                 ·
                 <span th:text="${#lists.size(collection.tweets)}"></span> tweets
             </p>
 
-            <form id="tweetForm" th:if="${isCreator}" class="flex gap-2">
-                <input id="tweetUrl" type="text" placeholder="Paste tweet URL..."
+            <form th:action="@{/collection/{collectionId}/add-tweet(collectionId=${collection.id})}" method="post"
+                id="tweetForm" th:if="${isCreator}" class="flex gap-2" th:object="${form}">
+
+                <input id="tweetLink" type="text" placeholder="Paste tweet URL..." name="tweetLink"
+                    th:field="*{tweetLink}"
                     class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
                     Add
                 </button>
             </form>
-
             <p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
             <p id="success-message" style="color: green; display: none;"></p>
 
@@ -74,43 +77,43 @@
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const urlInput = document.getElementById('tweetUrl').value;
-            const urlEndpoint = "/collection/" + [[${ collection.id }]] + "/add-tweet";
-
-            if (isTweetUrl(urlInput)) {
-                console.log('URL válida:', urlInput);
-                errorMessage.style.display = 'none';
-                fetch(urlEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        tweetLink: urlInput
-                    }).toString(),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            successMessage.textContent = data.message;
-                            successMessage.style.display = 'block';
-                            location.reload(true);
-                        } else {
-                            errorMessage.textContent = data.message;
-                            errorMessage.style.display = 'block';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error while sending the URL:', error);
-                        errorMessage.textContent = "There was an unexpected error while processing the application.";
-                        errorMessage.style.display = 'block';
-                    });
-            } else {
-                errorMessage.style.display = 'block';
-            }
-        });
+        /*  form.addEventListener('submit', function (event) {
+             event.preventDefault();
+             const urlInput = document.getElementById('tweetUrl').value;
+             const urlEndpoint = "/collection/" + [[${ collection.id }]] + "/add-tweet";
+ 
+             if (isTweetUrl(urlInput)) {
+                 console.log('URL válida:', urlInput);
+                 errorMessage.style.display = 'none';
+                 fetch(urlEndpoint, {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/x-www-form-urlencoded',
+                     },
+                     body: new URLSearchParams({
+                         tweetLink: urlInput
+                     }).toString(),
+                 })
+                     .then(response => response.json())
+                     .then(data => {
+                         if (data.status === 'success') {
+                             successMessage.textContent = data.message;
+                             successMessage.style.display = 'block';
+                             location.reload(true);
+                         } else {
+                             errorMessage.textContent = data.message;
+                             errorMessage.style.display = 'block';
+                         }
+                     })
+                     .catch(error => {
+                         console.error('Error while sending the URL:', error);
+                         errorMessage.textContent = "There was an unexpected error while processing the application.";
+                         errorMessage.style.display = 'block';
+                     });
+             } else {
+                 errorMessage.style.display = 'block';
+             }
+         }); */
         function removeTweet(tweetId) {
             const urlEndpoint = "/collection/" + [[${ collection.id }]] + "/remove-tweet";
 

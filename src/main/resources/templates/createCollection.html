@@ -19,7 +19,7 @@
 
   <main class="h-screen flex justify-center items-center w-full p-6 sm:overflow-y-auto">
 
-    <form action="/create-collection" method="post"
+    <form action="/collection/create" method="post"
       class="flex flex-col items-center space-y-6 p-8 max-w-md mx-auto bg-white shadow-2xl rounded-3xl border border-gray-200">
 
       <h2 class="text-3xl font-extrabold text-gray-800 mb-4">Create Collection</h2>
@@ -34,9 +34,9 @@
 
       <!-- Public Checkbox -->
       <div class="w-full flex items-center space-x-3">
-        <input type="checkbox" id="isPublic" name="isPublic"
+        <input type="checkbox" id="isPublic" name="public" value="true"
           class="h-5 w-5 text-blue-600 focus:ring-blue-500 rounded" />
-        <label for="isPublic" class="text-sm text-gray-700">Make this collection public</label>
+        <label for="public" class="text-sm text-gray-700">Make this collection public</label>
       </div>
 
       <!-- Submit Button -->

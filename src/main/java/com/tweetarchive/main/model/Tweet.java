@@ -1,9 +1,18 @@
 package com.tweetarchive.main.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.time.LocalDateTime;
 
-import java.sql.Timestamp;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class Tweet {
     @Id
@@ -11,42 +20,12 @@ public class Tweet {
     private Long id;
 
     private String tweet;
+
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "collection_id")
     private Collection collection;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTweet() {
-        return tweet;
-    }
-
-    public void setTweet(String tweet) {
-        this.tweet = tweet;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Collection getCollection() {
-        return collection;
-    }
-
-    public void setCollection(Collection collection) {
-        this.collection = collection;
-    }
 }

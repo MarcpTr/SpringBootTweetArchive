@@ -4,45 +4,53 @@
 
 <body>
   <div th:fragment="navbar">
-  <aside class="fixed bottom-0 w-full sm:relative sm:w-20 2xl:w-64 sm:h-screen bg-white border-t sm:border-t-0 sm:border-r shadow-sm">
+    <aside
+      class="fixed bottom-0 w-full sm:relative sm:w-20 2xl:w-64 sm:h-screen bg-white border-t sm:border-t-0 sm:border-r shadow-sm">
 
-  
-  <nav class="flex sm:flex-col justify-around sm:justify-start sm:pt-8 sm:space-y-6 items-center h-16 sm:h-full">
 
-        <a href="/"   class="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-500 font-semibold bg-blue-50 sm:w-full sm:justify-center 2xl:justify-start hover:bg-blue-100 transition"        aria-label="Home" title="Home">
+      <nav class="flex sm:flex-col justify-around sm:justify-start sm:pt-8 sm:space-y-6 items-center h-16 sm:h-full">
+
+        <a href="/"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-blue-500 font-semibold bg-blue-50 sm:w-full sm:justify-center 2xl:justify-start hover:bg-blue-100 transition"
+          aria-label="Home" title="Home">
           <i class="fas fa-home text-xl"></i>
           <span class="hidden 2xl:inline">Home</span>
         </a>
 
-      <!--   <a href="/search" class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
+        <!--   <a href="/search" class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
        aria-label="Search" title="Search">
           <i class="fas fa-search text-xl"></i>
           <span class="hidden 2xl:inline">Search</span>
         </a>
  -->
-        <a href="/my-collections"  class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
-       aria-label="Collections" title="Collections">
+        <a href="/my-collections"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
+          aria-label="Collections" title="Collections">
           <i class="fas fa-folder text-xl"></i>
           <span class="hidden 2xl:inline">Collections</span>
         </a>
 
-        <a href="/create-collection"   class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
-       aria-label="Create collection" title="Create">
-      <i class="fas fa-plus text-xl"></i>
+        <a href="/collection/create"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
+          aria-label="Create collection" title="Create">
+          <i class="fas fa-plus text-xl"></i>
           <span class="hidden 2xl:inline">Create</span>
         </a>
-        <a href="/login" th:if="${#authentication.principal == 'anonymousUser'}"   class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
-       aria-label="Login" title="Login">
+        <a href="/auth/login" th:if="${#authentication.principal == 'anonymousUser'}"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
+          aria-label="Login" title="Login">
           <i class="fas  fa-users text-xl"></i>
           <span class="hidden 2xl:inline">Login</span>
         </a>
-           <a href="/register" th:if="${#authentication.principal == 'anonymousUser'}"  class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
-       aria-label="Register" title="Register">
+        <a href="/auth/register" th:if="${#authentication.principal == 'anonymousUser'}"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 sm:w-full sm:justify-center 2xl:justify-start hover:text-blue-500 hover:bg-blue-50 transition"
+          aria-label="Register" title="Register">
           <i class="fas fa-sign-in text-xl"></i>
           <span class="hidden 2xl:inline">Register</span>
         </a>
+        
       </nav>
-    </aside>  
+    </aside>
   </div>
 
 </body>

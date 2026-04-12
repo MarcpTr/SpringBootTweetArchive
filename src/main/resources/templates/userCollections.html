@@ -17,39 +17,56 @@
 <p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
 <p id="success-message" style="color: green; display: none;"></p>
 
-        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}"
-                class="bg-white p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer">
-                <a th:href="@{/collection/{id}(id=${collection.id})}">
-                    <h2 class="text-lg font-bold" th:text="${collection.name}"></h2>
-                    <span class="text-sm text-gray-500" th:text="'by: ' + ${collection.user.username}"
-                        th:onclick="|window.location.href='@{/user/{id}(id=${collection.user.id})}'|">
-                    </span>
-                    <div class="mt-4 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}"
+    class="bg-white p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer relative"
+    th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
 
-                        <div class="tweet-wrapper relative"
-                            th:if="${!#lists.isEmpty(collection.tweets) and collection.tweets[0].tweet != null}">
-                            <blockquote class="twitter-tweet">
-                                <a
-                                    th:href="'https://twitter.com/user/status/' + ${collection.tweets[0].tweet.substring(collection.tweets[0].tweet.lastIndexOf('/') + 1)}">
-                                    Loading preview
-                                </a>
-                            </blockquote>
-                            <!-- Overlay invisible -->
-                            <a th:href="@{/collection/{id}(id=${collection.id})}" class="absolute inset-0 z-10"></a>
-                        </div>
-                        <span th:if="${#lists.isEmpty(collection.tweets) or collection.tweets[0].tweet == null}"
-                            class="text-gray-400 text-sm">
-                            No preview
-                        </span>
-                    </div>
-                    <div class="mt-4 flex justify-between text-xs text-gray-400">
-                        <span th:text="${#lists.size(collection.tweets)} + ' tweets'"></span>
-                        <span>#dev</span>
-                    </div>
+    <!-- Nombre de la colección -->
+    <h2 class="text-lg font-bold" th:text="${collection.collectionName}"></h2>
+
+    <!-- Span clicable para ir al perfil del usuario -->
+    <span class="text-sm text-gray-500 hover:text-sky-400 cursor-pointer"
+          th:text="'by: ' + ${collection.username}"
+          th:onclick="|event.stopPropagation(); window.location.href='@{/user/{id}(id=${collection.userId})}'|">
+    </span>
+
+    <!-- Botones fuera del enlace -->
+    <!-- <div class="mt-2 flex gap-2">
+        <button onClick="event.stopPropagation(); removeCollection(this.id)" th:id="${collection.collectionId}"
+                class="text-red-500 hover:text-red-700">
+            <i class="fas fa-trash"></i>
+        </button>
+        <button onClick="event.stopPropagation(); changeVisibility(this.id)" th:id="${collection.collectionId}"
+                class="text-blue-500 hover:text-blue-700">
+            <i class="fas" th:classappend="${collection.isPublic ? 'fa-eye' : 'fa-eye-slash'}"></i>
+        </button>
+    </div> -->
+
+    <!-- Preview del tweet -->
+    <div class="mt-4 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
+        <div class="tweet-wrapper relative w-full h-full" th:if="${collection.previewTweet != null}">
+            <blockquote class="twitter-tweet">
+                <a th:href="'https://twitter.com/user/status/' + ${collection.previewTweet.substring(collection.previewTweet.lastIndexOf('/') + 1)}">
+                    Loading preview
                 </a>
-            </li>
-</ul>
+            </blockquote>
+            <!-- Overlay que bloquea interacción del iframe y redirige a la colección -->
+            <div class="absolute inset-0 z-20 cursor-pointer"
+                 th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
+            </div>
+        </div>
+        <span th:if="${collection.previewTweet == null}" class="text-gray-400 text-sm">
+            No preview
+        </span>
+    </div>
+
+    <div class="mt-4 flex justify-between text-xs text-gray-400">
+        <span th:text="${collection.tweetCount} + ' tweets'"></span>
+        <span>#dev</span>
+    </div>
+</li>
+        </ul>
 </main>
 </body>
 </html>

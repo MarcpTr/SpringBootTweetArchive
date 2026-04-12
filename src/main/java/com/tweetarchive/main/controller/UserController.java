@@ -21,7 +21,7 @@ public class UserController {
     UserService userService;
     @Autowired
     CollectionService collectionService;
-    @GetMapping("/user/{userId}")
+  /*   @GetMapping("/user/{userId}")
     public String viewUserCollections(@PathVariable Long userId, Model model){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String username= authentication.getName();
@@ -32,5 +32,5 @@ public class UserController {
         model.addAttribute("collections", collections);
         model.addAttribute("username", user.getUsername());
         return "userCollections";
-    }
+    } */
 }

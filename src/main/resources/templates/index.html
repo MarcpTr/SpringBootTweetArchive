@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Public Collections</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script defer src="https://analytics.marcpericot.es/script.js"
+        data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
+    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <style>
+        .pointer-events-none {
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
+    <div th:replace="fragments :: navbar"></div>
+    <main class="flex-1 p-6 sm:p-10 space-y-8">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Public collections</h1>
+
+            <a th:href="@{/collection/create}"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+                + New
+            </a>
+        </div>
+
+        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}"
+                class="bg-white p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer relative"
+                th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
+
+                <!-- Nombre de la colección -->
+                <h2 class="text-lg font-bold" th:text="${collection.collectionName}"></h2>
+
+                <!-- Span clicable para ir al perfil del usuario -->
+                <span class="text-sm text-gray-500 hover:text-sky-400 cursor-pointer"
+                    th:text="'by: ' + ${collection.username}"
+                    th:onclick="|event.stopPropagation(); window.location.href='@{/user/{username}(username=${collection.username})}'|">
+                </span>
+
+                <!-- Preview del tweet -->
+                <div class="mt-4 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
+                    <div class="tweet-wrapper relative w-full h-full" th:if="${collection.previewTweet != null}">
+                        <blockquote class="twitter-tweet">
+                            <a
+                                th:href="'https://twitter.com/user/status/' + ${collection.previewTweet.substring(collection.previewTweet.lastIndexOf('/') + 1)}">
+                                Loading preview
+                            </a>
+                        </blockquote>
+                        <!-- Overlay que bloquea interacción del iframe y redirige a la colección -->
+                        <div class="absolute inset-0 z-20 cursor-pointer"
+                            th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
+                        </div>
+                    </div>
+                    <span th:if="${collection.previewTweet == null}" class="text-gray-400 text-sm">
+                        No preview
+                    </span>
+                </div>
+
+                <div class="mt-4 flex justify-between text-xs text-gray-400">
+                    <span th:text="${collection.tweetCount} + ' tweets'"></span>
+                    <span>#dev</span>
+                </div>
+            </li>
+             <li th:unless="${collections != null and !#lists.isEmpty(collections)}"
+        class="p-5 text-gray-500">
+        No hay colecciones disponibles
+    </li>
+        </ul>
+
+    </main>
+</body>
+
+</html>
