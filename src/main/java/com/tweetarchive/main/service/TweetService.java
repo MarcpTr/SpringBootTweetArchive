@@ -45,7 +45,7 @@ public class TweetService {
         Optional<Collection> collection = collectionRepository.findByIdAndUserId(collectionId,
                 ((CustomUserDetails) principal).getId());
         if (collection.isEmpty()) {
-            throw new CollectionNotFoundException(collectionId);
+            throw new CollectionNotFoundException();
         }
         if (!TweetLinkValidator.isTweetUrl(tweetLink)) {
             throw new FieldValidationException();

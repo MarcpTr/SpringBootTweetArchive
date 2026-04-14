@@ -5,18 +5,14 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tweetarchive.main.model.Collection;
-import com.tweetarchive.main.model.CustomUserDetails;
-import com.tweetarchive.main.model.User;
-import com.tweetarchive.main.repository.CollectionRepository;
+import com.tweetarchive.main.model.DTO.VisibilityRequest;
 import com.tweetarchive.main.service.CollectionService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,11 +23,24 @@ import lombok.RequiredArgsConstructor;
 public class CollectionRestController {
     private final CollectionService collectionService;
 
-    @PutMapping("/collection/{collectionId}/change-visibility")
-    public ResponseEntity<Map<String, Object>> changeVisibility(@PathVariable Long collectionId) {
+    @PutMapping("/{collectionId}/visibility")
+    public ResponseEntity<?> changeVisibility(@PathVariable long collectionId) {
 
-        Map<String, Object> response = collectionService.changeVisibility(collectionId);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        collectionService.changeVisibility(collectionId);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "Visibility updated"));
+
     }
-    
+
+    @DeleteMapping("/{collectionId}")
+    public ResponseEntity<?> deleteCollection(@PathVariable long collectionId) {
+
+        collectionService.deleteCollection(collectionId);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "Collection deleted"));
+    }
 }

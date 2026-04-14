@@ -12,6 +12,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script defer src="https://analytics.marcpericot.es/script.js"
         data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
+
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
@@ -25,110 +26,140 @@
 
         <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <li th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}"
-    class="bg-white p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer relative"
-    th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
+                class="bg-white p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer relative"
+                th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
 
-    <!-- Nombre de la colección -->
-    <h2 class="text-lg font-bold" th:text="${collection.collectionName}"></h2>
+                <!-- Nombre de la colección -->
+                <h2 class="text-lg font-bold" th:text="${collection.collectionName}"></h2>
 
-    <!-- Span clicable para ir al perfil del usuario -->
-    <span class="text-sm text-gray-500 hover:text-sky-400 cursor-pointer"
-          th:text="'by: ' + ${collection.username}"
-          th:onclick="|event.stopPropagation(); window.location.href='@{/user/{username}(username=${collection.username})}'|">
-    </span>
+                <!-- Span clicable para ir al perfil del usuario -->
+                <span class="text-sm text-gray-500 hover:text-sky-400 cursor-pointer"
+                    th:text="'by: ' + ${collection.username}"
+                    th:onclick="|event.stopPropagation(); window.location.href='@{/user/{username}(username=${collection.username})}'|">
+                </span>
 
-    <!-- Botones fuera del enlace -->
-    <div class="mt-2 flex gap-2">
-        <button onClick="event.stopPropagation(); removeCollection(this.id)" th:id="${collection.collectionId}"
-                class="text-red-500 hover:text-red-700">
-            <i class="fas fa-trash"></i>
-        </button>
-        <button onClick="event.stopPropagation(); changeVisibility(this.id)" th:id="${collection.collectionId}"
-                class="text-blue-500 hover:text-blue-700">
-            <i class="fas" th:classappend="${collection.isPublic ? 'fa-eye' : 'fa-eye-slash'}"></i>
-        </button>
-    </div>
+                <!-- Botones fuera del enlace -->
+                <div class="mt-2 flex gap-2">
+                    <button type="button" th:id="'delete-' + ${collection.collectionId}"
+                        th:attr="data-id=${collection.collectionId}"
+                        onclick="event.stopPropagation(); deleteCollection(this.dataset.id)"
+                        class="text-red-500 hover:text-red-700">
 
-    <!-- Preview del tweet -->
-    <div class="mt-4 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
-        <div class="tweet-wrapper relative w-full h-full" th:if="${collection.previewTweet != null}">
-            <blockquote class="twitter-tweet">
-                <a th:href="'https://twitter.com/user/status/' + ${collection.previewTweet.substring(collection.previewTweet.lastIndexOf('/') + 1)}">
-                    Loading preview
-                </a>
-            </blockquote>
-            <!-- Overlay que bloquea interacción del iframe y redirige a la colección -->
-            <div class="absolute inset-0 z-20 cursor-pointer"
-                 th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
-            </div>
-        </div>
-        <span th:if="${collection.previewTweet == null}" class="text-gray-400 text-sm">
-            No preview
-        </span>
-    </div>
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button type="button" th:id="'btn-' + ${collection.collectionId}"
+                        onclick="event.stopPropagation(); toggleVisibility(this.dataset.id)"
+                        th:attr="data-id=${collection.collectionId}" class="text-blue-500 hover:text-blue-700">
 
-    <div class="mt-4 flex justify-between text-xs text-gray-400">
-        <span th:text="${collection.tweetCount} + ' tweets'"></span>
-        <span>#dev</span>
-    </div>
-</li>
+                        <i class="fas" th:classappend="${collection.isPublic} ? 'fa-eye' : 'fa-eye-slash'">
+                        </i>
+
+                    </button>
+                </div>
+
+                <!-- Preview del tweet -->
+                <div class="mt-4 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
+                    <div class="tweet-wrapper relative w-full h-full" th:if="${collection.previewTweet != null}">
+                        <blockquote class="twitter-tweet">
+                            <a
+                                th:href="'https://twitter.com/user/status/' + ${collection.previewTweet.substring(collection.previewTweet.lastIndexOf('/') + 1)}">
+                                Loading preview
+                            </a>
+                        </blockquote>
+                        <!-- Overlay que bloquea interacción del iframe y redirige a la colección -->
+                        <div class="absolute inset-0 z-20 cursor-pointer"
+                            th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
+                        </div>
+                    </div>
+                    <span th:if="${collection.previewTweet == null}" class="text-gray-400 text-sm">
+                        No preview
+                    </span>
+                </div>
+
+                <div class="mt-4 flex justify-between text-xs text-gray-400">
+                    <span th:text="${collection.tweetCount} + ' tweets'"></span>
+                    <span>#dev</span>
+                </div>
+            </li>
         </ul>
     </main>
+    <script th:inline="javascript">
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+    </script>
     <script>
+
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
-        function removeCollection(collectionId) {
-            const urlEndpoint = "/collection/" + collectionId + "/remove-collection";
+        function deleteCollection(collectionId) {
 
-            fetch(urlEndpoint, {
+            if (!confirm("¿Seguro que quieres eliminar esta colección?")) {
+                return;
+            }
+
+            fetch(`/api/collection/${collectionId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
                 }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        successMessage.textContent = data.message;
-                        successMessage.style.display = 'block';
-                        location.reload(true);
-                    } else {
-                        errorMessage.textContent = data.message;
-                        errorMessage.style.display = 'block';
-                    }
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) throw data;
+                    return data;
                 })
-                .catch(error => {
-                    console.error('Error while sending the URL:', error);
-                    errorMessage.textContent = "There was an unexpected error while processing the application.";
-                    errorMessage.style.display = 'block';
+                .then(data => {
+
+                    console.log(data.message);
+
+                    // 🔥 eliminar del DOM sin reload
+                    const card = document.getElementById("collection-" + collectionId);
+                    if (card) {
+                        card.remove();
+                    }
+
+                })
+                .catch(err => {
+                    alert(err.message || "Error eliminando colección");
+                    console.error(err);
                 });
         }
-        function changeVisibility(collectionId) {
-            const urlEndpoint = "/collection/" + collectionId + "/change-visibility";
+        function toggleVisibility(collectionId) {
 
-            fetch(urlEndpoint, {
+            fetch(`/api/collection/${collectionId}/visibility`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+
                 }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        successMessage.textContent = data.message;
-                        successMessage.style.display = 'block';
-                        location.reload(true);
-                    } else {
-                        errorMessage.textContent = data.message;
-                        errorMessage.style.display = 'block';
-                    }
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) throw data;
+                    return data;
                 })
-                .catch(error => {
-                    console.error('Error while sending the URL:', error);
-                    errorMessage.textContent = "There was an unexpected error while processing the application.";
-                    errorMessage.style.display = 'block';
+                .then(data => {
+
+                    // 🔥 actualizar icono
+                    const btn = document.getElementById("btn-" + collectionId);
+                    const icon = btn.querySelector("i");
+
+                    const isNowPublic = icon.classList.contains("fa-eye-slash");
+
+                    icon.classList.toggle("fa-eye");
+                    icon.classList.toggle("fa-eye-slash");
+
+                    console.log(data.message);
+
+                })
+                .catch(err => {
+                    alert(err.message || "Error cambiando visibilidad");
+                    console.error(err);
                 });
         }
+
     </script>
 </body>
 

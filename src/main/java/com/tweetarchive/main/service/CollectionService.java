@@ -2,6 +2,7 @@ package com.tweetarchive.main.service;
 
 import com.tweetarchive.main.exceptions.CollectionNotFoundException;
 import com.tweetarchive.main.exceptions.FieldValidationException;
+import com.tweetarchive.main.exceptions.ForbiddenOperationException;
 import com.tweetarchive.main.exceptions.InvalidCredentialsException;
 import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.exceptions.UserNotFoundException;
@@ -23,9 +24,11 @@ import lombok.val;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -105,29 +108,29 @@ public class CollectionService {
 
             return dto;
         } else{
-            throw new CollectionNotFoundException(id);
+            throw new CollectionNotFoundException();
         }
     }
 
-    public Map<String, Object> changeVisibility(long collectionId) {
-        Map<String, Object> response = new HashMap<>();
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId;
-        if (principal instanceof CustomUserDetails) {
-            userId = ((CustomUserDetails) principal).getId();
+ @Transactional
+    public void changeVisibility(long collectionId) {
 
-            Collection collection = collectionRepository.findById(collectionId)
-                    .orElseThrow(() -> new RuntimeException("Collection not found"));
-            if (userId.equals(collection.getUser().getId())) {
-                updateIsPublic(collection);
-                response.put("status", "success");
-                response.put("message", "Visibility updated");
-                return response;
-            }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails user)) {
+            throw new ForbiddenOperationException("Unauthorized");
         }
-        response.put("status", "error");
-        response.put("message", "Something went wrong: ");
-        return response;
+
+        Long userId = user.getId();
+
+        Collection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(CollectionNotFoundException::new);
+
+        if (!collection.getUser().getId().equals(userId)) {
+            throw new ForbiddenOperationException("You are not the owner of this collection");
+        }
+
+        collection.setPublic(!collection.isPublic());
     }
   public Long createCollection(String collectionName, boolean isPublic) {
 
@@ -197,5 +200,24 @@ public class CollectionService {
     public void delete(Collection collection) {
         collectionRepository.delete(collection);
     }
+
+   @Transactional
+public void deleteCollection(long collectionId) {
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+    if (!(auth.getPrincipal() instanceof CustomUserDetails user)) {
+        throw new ForbiddenOperationException("Unauthorized");
+    }
+
+    Collection collection = collectionRepository.findById(collectionId)
+            .orElseThrow(CollectionNotFoundException::new);
+
+    if (!collection.getUser().getId().equals(user.getId())) {
+        throw new ForbiddenOperationException("You are not the owner");
+    }
+
+    collectionRepository.delete(collection);
+}
 
 }
