@@ -24,6 +24,7 @@ import lombok.val;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -87,32 +88,41 @@ public class CollectionService {
 
     public CollectionDTO viewCollection(long id) {
 
-        Optional<Collection> collection = collectionRepository.findById(id);
-        if (collection.isPresent()) {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String currentUsername = null;
-            if (principal instanceof UserDetails) {
-                currentUsername = ((UserDetails) principal).getUsername();
-            } else if (principal instanceof String) {
-                currentUsername = (String) principal;
-            }
+        Collection collection = collectionRepository.findById(id)
+                .orElseThrow(CollectionNotFoundException::new);
 
-            CollectionDTO dto = new CollectionDTO();
-            dto.setId(collection.get().getId());
-            dto.setName(collection.get().getName());
-            dto.setUsername(collection.get().getUser().getUsername());
-            dto.setUserId(collection.get().getUser().getId());
+        String currentUsername = getCurrentUsername();
 
-            Optional<List<Tweet>> tweets = tweetRepository.findAllByCollectionId(id);
-            tweets.ifPresent(dto::setTweets);
-
-            return dto;
-        } else{
+        // Validación de acceso
+        if (!collection.isPublic() &&
+                !collection.getUser().getUsername().equals(currentUsername)) {
             throw new CollectionNotFoundException();
         }
+
+        CollectionDTO dto = new CollectionDTO();
+        dto.setId(collection.getId());
+        dto.setName(collection.getName());
+        dto.setUsername(collection.getUser().getUsername());
+        dto.setUserId(collection.getUser().getId());
+
+        tweetRepository.findAllByCollectionId(id)
+                .ifPresent(dto::setTweets);
+
+        return dto;
     }
 
- @Transactional
+    private String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        return principal.toString();
+    }
+
+    @Transactional
     public void changeVisibility(long collectionId) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -132,7 +142,8 @@ public class CollectionService {
 
         collection.setPublic(!collection.isPublic());
     }
-  public Long createCollection(String collectionName, boolean isPublic) {
+
+    public Long createCollection(String collectionName, boolean isPublic) {
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -177,8 +188,6 @@ public class CollectionService {
         collectionRepository.save(collection);
     }
 
-  
-
     /*
      * public void checkAndDeleteOldCollections() {
      * LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
@@ -201,23 +210,23 @@ public class CollectionService {
         collectionRepository.delete(collection);
     }
 
-   @Transactional
-public void deleteCollection(long collectionId) {
+    @Transactional
+    public void deleteCollection(long collectionId) {
 
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    if (!(auth.getPrincipal() instanceof CustomUserDetails user)) {
-        throw new ForbiddenOperationException("Unauthorized");
+        if (!(auth.getPrincipal() instanceof CustomUserDetails user)) {
+            throw new ForbiddenOperationException("Unauthorized");
+        }
+
+        Collection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(CollectionNotFoundException::new);
+
+        if (!collection.getUser().getId().equals(user.getId())) {
+            throw new ForbiddenOperationException("You are not the owner");
+        }
+
+        collectionRepository.delete(collection);
     }
-
-    Collection collection = collectionRepository.findById(collectionId)
-            .orElseThrow(CollectionNotFoundException::new);
-
-    if (!collection.getUser().getId().equals(user.getId())) {
-        throw new ForbiddenOperationException("You are not the owner");
-    }
-
-    collectionRepository.delete(collection);
-}
 
 }

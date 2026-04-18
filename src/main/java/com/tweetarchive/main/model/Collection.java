@@ -27,10 +27,7 @@ public class Collection {
 
     @Column(name = "last_visited_at")
     private LocalDateTime lastVisitedAt;
-    /*
-     * @OneToMany(mappedBy = "collection")
-     * private List<Tweet> tweets;
-     */
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

@@ -14,7 +14,6 @@
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
-
     <div th:replace="fragments :: navbar"></div>
 
     <main class="flex-1 p-6 sm:p-10">
@@ -67,7 +66,13 @@
 
 
     </main>
-    <script>
+    <script th:inline="javascript">
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+    </script>
+    <script th:inline="javascript">
+        const collectionId = [[${ collection.id }]];
+
         function isTweetUrl(url) {
             const tweetUrlRegex = /^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+|(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$/;
             return tweetUrlRegex.test(url);
@@ -77,54 +82,15 @@
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
 
-        /*  form.addEventListener('submit', function (event) {
-             event.preventDefault();
-             const urlInput = document.getElementById('tweetUrl').value;
-             const urlEndpoint = "/collection/" + [[${ collection.id }]] + "/add-tweet";
- 
-             if (isTweetUrl(urlInput)) {
-                 console.log('URL válida:', urlInput);
-                 errorMessage.style.display = 'none';
-                 fetch(urlEndpoint, {
-                     method: 'POST',
-                     headers: {
-                         'Content-Type': 'application/x-www-form-urlencoded',
-                     },
-                     body: new URLSearchParams({
-                         tweetLink: urlInput
-                     }).toString(),
-                 })
-                     .then(response => response.json())
-                     .then(data => {
-                         if (data.status === 'success') {
-                             successMessage.textContent = data.message;
-                             successMessage.style.display = 'block';
-                             location.reload(true);
-                         } else {
-                             errorMessage.textContent = data.message;
-                             errorMessage.style.display = 'block';
-                         }
-                     })
-                     .catch(error => {
-                         console.error('Error while sending the URL:', error);
-                         errorMessage.textContent = "There was an unexpected error while processing the application.";
-                         errorMessage.style.display = 'block';
-                     });
-             } else {
-                 errorMessage.style.display = 'block';
-             }
-         }); */
         function removeTweet(tweetId) {
-            const urlEndpoint = "/collection/" + [[${ collection.id }]] + "/remove-tweet";
+            const urlEndpoint = `/api/collection/${collectionId}/tweets/${tweetId}`;
 
             fetch(urlEndpoint, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    tweetId: tweetId
-                }).toString(),
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
             })
                 .then(response => response.json())
                 .then(data => {
@@ -138,8 +104,8 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error while sending the URL:', error);
-                    errorMessage.textContent = "There was an unexpected error while processing the application.";
+                    console.error('Error:', error);
+                    errorMessage.textContent = "Unexpected error.";
                     errorMessage.style.display = 'block';
                 });
         }

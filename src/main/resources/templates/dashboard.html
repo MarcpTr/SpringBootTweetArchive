@@ -20,7 +20,7 @@
     <main class="h-screen  flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
         <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl"
             th:if="${#authentication.principal != 'anonymousUser'}"><span th:text="${#authentication.name}"></span>'s
-            Collections</h1>
+            Dashboard</h1>
         <p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
         <p id="success-message" style="color: green; display: none;"></p>
 

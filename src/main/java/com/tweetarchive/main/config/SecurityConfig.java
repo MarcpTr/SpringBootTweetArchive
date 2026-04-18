@@ -16,21 +16,22 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                //.csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/register", "/auth/login", "/auth/register", "/",
+                                                .requestMatchers("/register", "/login", "/register", "/", 
                                                                 "/error", "/user/**", "colecction/{id}")
                                                 .permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/collection/create").authenticated()
                                                 .requestMatchers(HttpMethod.GET, "/collection/**").permitAll()
+                                                .requestMatchers(HttpMethod.DELETE, "/api/collection/**").authenticated()
 
                                                 .requestMatchers(HttpMethod.POST, "/collection/**").authenticated()
                                                 .requestMatchers(HttpMethod.PUT, "/collection/**").authenticated()
                                                 .requestMatchers(HttpMethod.DELETE, "/collection/**").authenticated()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
-                                                .loginPage("/auth/login")
+                                                .loginPage("/login")
                                                 .defaultSuccessUrl("/", true)
+                                                .failureUrl("/login?error")
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
