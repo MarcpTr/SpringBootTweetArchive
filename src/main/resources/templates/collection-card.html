@@ -42,7 +42,7 @@
         <!-- Footer -->
         <div class="mt-4 flex justify-between text-xs text-gray-400">
             <span th:text="${collection.tweetCount()} + ' tweets'"></span>
-            <span>#dev</span>
+            <span  th:text="${collection.likes()} + ' me gusta'"></span>
         </div>
     </li>
 </body>
