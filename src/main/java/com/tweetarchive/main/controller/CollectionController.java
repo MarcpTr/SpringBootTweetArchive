@@ -1,21 +1,24 @@
 package com.tweetarchive.main.controller;
 
+import com.tweetarchive.main.exceptions.CollectionNotFoundException;
+import com.tweetarchive.main.exceptions.FieldValidationException;
 import com.tweetarchive.main.exceptions.InvalidCredentialsException;
 import com.tweetarchive.main.exceptions.TweetAlreadyExistsException;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.DTO.AddTweetToCollectionForm;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
 import com.tweetarchive.main.model.DTO.CreateCollectionForm;
+import com.tweetarchive.main.model.enums.AddTweetResult;
 import com.tweetarchive.main.service.CollectionService;
 import com.tweetarchive.main.service.TweetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class CollectionController {
     }
 
     @GetMapping("/collection/{collectionId}")
-    public String viewCollection( 
+    public String viewCollection(
             @PathVariable Long collectionId,
             @AuthenticationPrincipal CustomUserDetails user,
             Model model) {
@@ -51,9 +54,12 @@ public class CollectionController {
         CollectionDTO collection = collectionService.viewCollection(collectionId);
         boolean isCreator = user != null && collection.getUserId().equals(user.getId());
 
+        if (!model.containsAttribute("form")) {
+            model.addAttribute("form", new AddTweetToCollectionForm());
+        }
+
         model.addAttribute("collection", collection);
         model.addAttribute("isCreator", isCreator);
-        model.addAttribute("form", new AddTweetToCollectionForm());
 
         return "viewCollection";
     }
@@ -91,34 +97,27 @@ public class CollectionController {
             @Valid @ModelAttribute("form") AddTweetToCollectionForm form,
             BindingResult bindingResult,
             @AuthenticationPrincipal CustomUserDetails user,
-            Model model) {
-        CollectionDTO collection = collectionService.viewCollection(collectionId);
-        boolean isCreator = user != null && collection.getUserId() == user.getId();
-
+            Model model,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return loadCollectionView(model, collection, isCreator);
+
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.form", bindingResult);
+            redirectAttributes.addFlashAttribute("form", form);
+            return "redirect:/collection/" + collectionId;
         }
 
-        try {
-            tweetService.addTweetToCollection(collectionId, form.getTweetLink());
+        AddTweetResult result = tweetService.addTweetToCollection(collectionId, form.getTweetLink());
 
-        } catch (TweetAlreadyExistsException e) {
-            bindingResult.rejectValue(
-                    "tweetLink",
-                    "error.tweetLink",
-                    "Este tweet ya está en la colección");
+        if (result == AddTweetResult.ALREADY_EXISTS) {
 
-            return loadCollectionView(model, collection, isCreator);
+            bindingResult.rejectValue("tweetLink", "tweet.duplicate");
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.form", bindingResult);
+            redirectAttributes.addFlashAttribute("form", form);
+
+            return "redirect:/collection/" + collectionId;
         }
 
+        redirectAttributes.addFlashAttribute("successMessage", "Tweet añadido correctamente");
         return "redirect:/collection/" + collectionId;
     }
-
-    // Método reutilizable para evitar duplicación
-    private String loadCollectionView(Model model, CollectionDTO collection, boolean isCreator) {
-        model.addAttribute("collection", collection);
-        model.addAttribute("isCreator", isCreator);
-        return "viewCollection";
-    }
 }
-   

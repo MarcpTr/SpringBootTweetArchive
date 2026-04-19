@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"tweet", "collection_id"})
+)
 public class Tweet {
     @Id
     @GeneratedValue (strategy =GenerationType.IDENTITY)

@@ -3,11 +3,9 @@ package com.tweetarchive.main.controller;
 import com.tweetarchive.main.exceptions.UserAlreadyExistsException;
 import com.tweetarchive.main.model.DTO.RegisterRequest;
 import com.tweetarchive.main.service.UserService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,6 +1,5 @@
 package com.tweetarchive.main.repository;
 
-
 import com.tweetarchive.main.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;

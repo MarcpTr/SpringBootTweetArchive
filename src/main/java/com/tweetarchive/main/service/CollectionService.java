@@ -1,45 +1,26 @@
 package com.tweetarchive.main.service;
 
 import com.tweetarchive.main.exceptions.CollectionNotFoundException;
-import com.tweetarchive.main.exceptions.FieldValidationException;
 import com.tweetarchive.main.exceptions.ForbiddenOperationException;
 import com.tweetarchive.main.exceptions.InvalidCredentialsException;
-import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.exceptions.UserNotFoundException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
-import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
 import com.tweetarchive.main.model.DTO.CollectionPreviewDTO;
-import com.tweetarchive.main.model.DTO.CreateCollectionResponse;
-import com.tweetarchive.main.model.DTO.TweetDTO;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.repository.UserRepository;
-import com.tweetarchive.main.util.TweetLinkValidator;
-
 import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service

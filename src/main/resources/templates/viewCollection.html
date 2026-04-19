@@ -34,8 +34,12 @@
 
                 <input id="tweetLink" type="text" placeholder="Paste tweet URL..." name="tweetLink"
                     th:field="*{tweetLink}"
+                    required
+                    pattern="^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$"
                     class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-
+                <div th:if="${#fields.hasErrors('tweetLink')}" th:errors="*{tweetLink}"
+                    class="text-red-500 text-sm mt-1"></div>
+                <p th:if="${successMessage}" th:text="${successMessage}" class="text-green-500"></p>
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
                     Add
                 </button>
@@ -73,10 +77,6 @@
     <script th:inline="javascript">
         const collectionId = [[${ collection.id }]];
 
-        function isTweetUrl(url) {
-            const tweetUrlRegex = /^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+|(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$/;
-            return tweetUrlRegex.test(url);
-        }
 
         const form = document.getElementById('tweetForm');
         const errorMessage = document.getElementById('error-message');

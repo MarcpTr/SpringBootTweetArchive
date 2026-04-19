@@ -1,27 +1,18 @@
 package com.tweetarchive.main.service;
 
 import com.tweetarchive.main.exceptions.CollectionNotFoundException;
-import com.tweetarchive.main.exceptions.FieldValidationException;
 import com.tweetarchive.main.exceptions.InvalidCredentialsException;
-import com.tweetarchive.main.exceptions.ResourceAlreadyExistsException;
-import com.tweetarchive.main.exceptions.ResourceNotFoundException;
-import com.tweetarchive.main.exceptions.TweetAlreadyExistsException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.Tweet;
+import com.tweetarchive.main.model.enums.AddTweetResult;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
-import com.tweetarchive.main.util.TweetLinkValidator;
-
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -35,35 +26,41 @@ public class TweetService {
         return tweetRepository.findById(id);
     }
 
-    public long addTweetToCollection(long collectionId, String tweetLink) {
+    public AddTweetResult addTweetToCollection(long collectionId, String tweetLink) {
+        Collection collection = collectionRepository
+                .findByIdAndUserId(collectionId, getUserId())
+                .orElseThrow(CollectionNotFoundException::new);
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (tweetRepository.findByTweetAndCollectionId(tweetLink, collectionId).isPresent()) {
+            return AddTweetResult.ALREADY_EXISTS;
+        }
 
-        if (!(principal instanceof CustomUserDetails)) {
-            throw new InvalidCredentialsException();
-        }
-        Optional<Collection> collection = collectionRepository.findByIdAndUserId(collectionId,
-                ((CustomUserDetails) principal).getId());
-        if (collection.isEmpty()) {
-            throw new CollectionNotFoundException();
-        }
-        if (!TweetLinkValidator.isTweetUrl(tweetLink)) {
-            throw new FieldValidationException();
-        }
-        /********************/
-        Optional<Tweet> tweetExistente = tweetRepository.findByTweetAndCollectionId(tweetLink, collectionId);
-        if (tweetExistente.isPresent()) {
-            throw new TweetAlreadyExistsException(collectionId);
-        }
         Tweet tweet = new Tweet();
         tweet.setTweet(tweetLink);
-        tweet.setCollection(collectionRepository.getReferenceById(collectionId));
+        tweet.setCollection(collection);
         tweet.setCreatedAt(LocalDateTime.now());
-        tweetRepository.save(tweet);
-        return collectionId;
+
+        try {
+            tweetRepository.save(tweet);
+        } catch (DataIntegrityViolationException e) {
+            return AddTweetResult.ALREADY_EXISTS;
+        }
+        return AddTweetResult.SUCCESS;
     }
 
     public void delete(Tweet tweet) {
         tweetRepository.delete(tweet);
+    }
+
+    private Long getUserId() {
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof CustomUserDetails user) {
+            return user.getId();
+        }
+
+        throw new InvalidCredentialsException();
     }
 }
