@@ -18,7 +18,7 @@ public class SecurityConfig {
                 http
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/register", "/login", "/register", "/", 
-                                                                "/error", "/user/**", "colecction/{id}")
+                                                                "/error", "/user/**", "/colecction/{id}")
                                                 .permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/collection/create").authenticated()
                                                 .requestMatchers(HttpMethod.GET, "/collection/**").permitAll()

@@ -7,13 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.Tweet;
+import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.repository.CollectionRepository;
+import com.tweetarchive.main.service.CollectionLikeService;
 import com.tweetarchive.main.service.CollectionService;
 import com.tweetarchive.main.service.TweetService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class CollectionRestController {
     private final CollectionService collectionService;
     private final TweetService tweetService;
     private final CollectionRepository collectionRepository;
+    private final CollectionLikeService likeService;
 
     @PutMapping("/{collectionId}/visibility")
     public ResponseEntity<?> changeVisibility(@PathVariable long collectionId) {
@@ -82,5 +86,25 @@ public class CollectionRestController {
         response.put("message", "Tweet removed from collection");
 
         return ResponseEntity.ok(response);
+    }
+  private static final String RESET = "\u001B[0m";
+    private static final String RED = "\u001B[31m";
+    private static final String GREEN = "\u001B[32m";
+    @PostMapping("/{id}/like")
+    public ResponseEntity<Void> like(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails user) {
+                System.out.println(GREEN + "USER: " + user.getId()+ RESET);
+        likeService.like(user.getId(), id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/like")
+    public ResponseEntity<Void> unlike(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        likeService.unlike(user.getId(), id);
+        return ResponseEntity.ok().build();
     }
 }

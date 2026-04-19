@@ -13,12 +13,14 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
 
     List<Collection> findByLastVisitedAtBefore(LocalDateTime time);
 
-   List<Collection>  findAllByUserId(Long id);
+    List<Collection> findAllByUserId(Long id);
 
     List<Collection> findByIsPublic(boolean isPublic);
 
     List<Collection> findByIsPublicAndUserId(boolean isPublic, long userId);
+
     Optional<Collection> findByIdAndUserId(long colectionId, long userId);
+
     @Query("""
                 SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
                     c.user.username,
@@ -27,7 +29,11 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
                     c.name,
                     c.isPublic,
                     MAX(t.tweet),
-                    COUNT(t.id)
+                    COUNT(t.id),
+
+                    (SELECT COUNT(cl)
+                     FROM CollectionLike cl
+                     WHERE cl.collection.id = c.id)
                 )
                 FROM Collection c
                 LEFT JOIN Tweet t ON t.collection.id = c.id

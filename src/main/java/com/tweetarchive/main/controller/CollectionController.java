@@ -42,7 +42,7 @@ public class CollectionController {
     @GetMapping("/user/{username}")
     public String viewUserCollections(@PathVariable String username, Model model) {
         model.addAttribute("collections", collectionService.findUserCollections(username));
-        return "collections";
+        return "user-collections";
     }
 
     @GetMapping("/collection/{collectionId}")

@@ -2,7 +2,10 @@ package com.tweetarchive.main.model;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.tweetarchive.main.model.enums.Role;
@@ -32,6 +35,8 @@ public class User implements UserDetails {
     private String password;
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CollectionLike> likes = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

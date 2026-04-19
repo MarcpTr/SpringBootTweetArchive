@@ -70,46 +70,7 @@
 
 
     </main>
-    <script th:inline="javascript">
-        const csrfToken = /*[[${_csrf.token}]]*/ '';
-        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
-    </script>
-    <script th:inline="javascript">
-        const collectionId = [[${ collection.id }]];
 
-
-        const form = document.getElementById('tweetForm');
-        const errorMessage = document.getElementById('error-message');
-        const successMessage = document.getElementById('success-message');
-
-        function removeTweet(tweetId) {
-            const urlEndpoint = `/api/collection/${collectionId}/tweets/${tweetId}`;
-
-            fetch(urlEndpoint, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        successMessage.textContent = data.message;
-                        successMessage.style.display = 'block';
-                        location.reload(true);
-                    } else {
-                        errorMessage.textContent = data.message;
-                        errorMessage.style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    errorMessage.textContent = "Unexpected error.";
-                    errorMessage.style.display = 'block';
-                });
-        }
-    </script>
 </body>
 
 </html>
