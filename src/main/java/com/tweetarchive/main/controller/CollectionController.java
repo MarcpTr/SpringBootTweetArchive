@@ -1,9 +1,6 @@
 package com.tweetarchive.main.controller;
 
-import com.tweetarchive.main.exceptions.CollectionNotFoundException;
-import com.tweetarchive.main.exceptions.FieldValidationException;
 import com.tweetarchive.main.exceptions.InvalidCredentialsException;
-import com.tweetarchive.main.exceptions.TweetAlreadyExistsException;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.DTO.AddTweetToCollectionForm;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
@@ -28,25 +25,25 @@ public class CollectionController {
     private final TweetService tweetService;
 
     @GetMapping("/")
-    public String listPublicCollections(Model model) {
-        model.addAttribute("collections", collectionService.findPublicCollections(true));
+    public String index(Model model) {
+        model.addAttribute("collections", collectionService.findBestCollections());
         return "index";
     }
 
     @GetMapping("/dashboard")
-    public String listMyCollections(Model model) {
+    public String DashboardView(Model model) {
         model.addAttribute("collections", collectionService.findMyCollections());
         return "dashboard";
     }
 
     @GetMapping("/user/{username}")
-    public String viewUserCollections(@PathVariable String username, Model model) {
+    public String userCollections(@PathVariable String username, Model model) {
         model.addAttribute("collections", collectionService.findUserCollections(username));
         return "user-collections";
     }
 
     @GetMapping("/collection/{collectionId}")
-    public String viewCollection(
+    public String collection(
             @PathVariable Long collectionId,
             @AuthenticationPrincipal CustomUserDetails user,
             Model model) {
@@ -61,11 +58,11 @@ public class CollectionController {
         model.addAttribute("collection", collection);
         model.addAttribute("isCreator", isCreator);
 
-        return "viewCollection";
+        return "collection";
     }
 
     @GetMapping("/collection/create")
-    public String showCreateForm(Model model) {
+    public String CreateCollectionView(Model model) {
         model.addAttribute("createCollectionForm", new CreateCollectionForm());
         return "createCollection";
     }

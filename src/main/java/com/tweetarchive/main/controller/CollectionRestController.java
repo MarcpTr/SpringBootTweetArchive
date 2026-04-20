@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.Tweet;
-import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.service.CollectionLikeService;
 import com.tweetarchive.main.service.CollectionService;

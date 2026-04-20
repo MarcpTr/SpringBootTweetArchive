@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -30,41 +29,40 @@ public class CollectionService {
     private final TweetRepository tweetRepository;
     private final UserRepository userRepository;
 
-    public List<CollectionPreviewDTO> findPublicCollections(boolean visibility) {
-        List<Collection> publicCollections = collectionRepository.findByIsPublic(visibility);
-        List<Long> ids = publicCollections.stream().map(Collection::getId).toList();
-        List<CollectionPreviewDTO> collectionPreviewDTO = collectionRepository.findByIdsWithPreviewTweet(ids);
-        return collectionPreviewDTO;
+    public List<CollectionPreviewDTO> findBestCollections() {
+        List<Collection> collections = collectionRepository.findByIsPublic(true);
+        return getPreviewByCollections(collections);
     }
 
     public List<CollectionPreviewDTO> findMyCollections() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId;
-        if (principal instanceof CustomUserDetails) {
-            userId = ((CustomUserDetails) principal).getId();
-            List<CollectionPreviewDTO> collectionPreviewDTO = collectionRepository
-                    .findByIdsWithPreviewTweet(collectionRepository.findAllByUserId(userId)
-                            .stream()
-                            .map(Collection::getId)
-                            .toList());
-            return collectionPreviewDTO;
+
+        if (!(principal instanceof CustomUserDetails userDetails)) {
+            return List.of();
         }
-        return null;
+
+        List<Collection> collections = collectionRepository.findAllByUserId(userDetails.getId());
+        return getPreviewByCollections(collections);
     }
 
     public List<CollectionPreviewDTO> findUserCollections(String username) {
 
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException(username);
-        } else {
-            long userId = user.get().getId();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
 
-            List<Collection> userCollections = collectionRepository.findByIsPublicAndUserId(true, userId);
-            List<Long> ids = userCollections.stream().map(Collection::getId).toList();
-            List<CollectionPreviewDTO> collectionPreviewDTO = collectionRepository.findByIdsWithPreviewTweet(ids);
-            return collectionPreviewDTO;
+        List<Collection> collections = collectionRepository.findByIsPublicAndUserId(true, user.getId());
+
+        return getPreviewByCollections(collections);
+    }
+
+    private List<CollectionPreviewDTO> getPreviewByCollections(List<Collection> collections) {
+        if (collections.isEmpty()) {
+            return List.of();
         }
+        List<Long> ids = collections.stream()
+                .map(Collection::getId)
+                .toList();
+        return collectionRepository.findByIdsWithPreviewTweet(ids);
     }
 
     public CollectionDTO viewCollection(long id) {
@@ -90,17 +88,6 @@ public class CollectionService {
                 .ifPresent(dto::setTweets);
 
         return dto;
-    }
-
-    private String getCurrentUsername() {
-        Object principal = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        }
-        return principal.toString();
     }
 
     @Transactional
@@ -147,17 +134,6 @@ public class CollectionService {
 
         return collection.getId();
     }
-    /*
-     * 
-     * public Optional<List<Collection>> findByUserId(long id) {
-     * return collectionRepository.findByUserId(id);
-     * }
-     */
-    /*
-     * public Optional<List<Collection>> findCollectionsByName(String name) {
-     * return collectionRepository.searchByNameFuzzy("%" + name + "%");
-     * }
-     */
 
     public boolean updateIsPublic(Collection collection) {
         collection.setPublic(!collection.isPublic());
@@ -168,24 +144,6 @@ public class CollectionService {
     public void save(Collection collection) {
         collectionRepository.save(collection);
     }
-
-    /*
-     * public void checkAndDeleteOldCollections() {
-     * LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
-     * List<Collection> oldCollections =
-     * collectionRepository.findByLastVisitedAtBefore(oneYearAgo);
-     * 
-     * for (Collection collections : oldCollections) {
-     * collectionRepository.delete(collections);
-     * }
-     * }
-     */
-
-    /*
-     * public Optional<List<Collection>> searchByNameFuzzy(String searchQuery) {
-     * return collectionRepository.searchByNameFuzzy(searchQuery);
-     * }
-     */
 
     public void delete(Collection collection) {
         collectionRepository.delete(collection);
@@ -210,4 +168,14 @@ public class CollectionService {
         collectionRepository.delete(collection);
     }
 
+    private String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        return principal.toString();
+    }
 }
