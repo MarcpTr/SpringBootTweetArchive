@@ -15,7 +15,7 @@
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
-    <div th:replace="fragments :: navbar"></div>
+    <div th:replace="fragments/navbar.html  :: navbar"></div>
     <main class="h-screen flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
         <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl"><span th:text="${username}"></span>'s Collections
         </h1>
@@ -26,62 +26,8 @@
         const csrfToken = /*[[${_csrf.token}]]*/ '';
         const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
     </script>
-    <script>
-        const loadingLikes = new Set();
+    <script type="text/javascript" th:src="@{/js/likes.js}"></script>
 
-        async function toggleLike(collectionId) {
-            if (loadingLikes.has(collectionId)) return;
-
-            const button = document.querySelector(
-                `.like-btn[onclick="event.stopPropagation(); toggleLike(${collectionId});"]`
-            );
-
-            if (!button) return;
-
-            const countSpan = button.querySelector(".like-count");
-
-            let liked = button.classList.contains("liked");
-            let likes = parseInt(countSpan.textContent || "0");
-
-            loadingLikes.add(collectionId);
-
-            try {
-                if (!liked) {
-                    await fetch(`/api/collection/${collectionId}/like`, {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            [csrfHeader]: csrfToken
-                        }
-                    });
-
-                    liked = true;
-                    likes++;
-
-                    button.classList.add("liked");
-                    button.innerHTML = `❤️ <span class="like-count">${likes}</span>`;
-                } else {
-                    await fetch(`/api/collection/${collectionId}/like`, {
-                        method: "DELETE",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            [csrfHeader]: csrfToken
-                        }
-                    });
-
-                    liked = false;
-                    likes--;
-
-                    button.classList.remove("liked");
-                    button.innerHTML = `🤍 <span class="like-count">${likes}</span>`;
-                }
-            } catch (err) {
-                console.error("Error toggle like:", err);
-            }
-
-            loadingLikes.delete(collectionId);
-        }
-    </script>
 </body>
 
 </html>

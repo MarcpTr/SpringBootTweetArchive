@@ -14,12 +14,17 @@
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
-    <div th:replace="fragments :: navbar"></div>
+    <div th:replace="fragments/navbar.html :: navbar"></div>
 
     <main class="flex-1 p-6 sm:p-10">
         <div class="max-w-2xl mx-auto space-y-4">
-
-            <h1 class="text-3xl font-bold" th:text="${collection.name}"></h1>
+            <div class="flex flex-row gap-2">
+                <h1 class="text-3xl font-bold" th:text="${collection.name}"></h1>
+                <button class="like-btn hover:shadow-xl hover:scale-[1.08]  cursor-pointer"
+                    th:onclick="|event.stopPropagation(); toggleLike(${collection.id});|">
+                    🤍
+                </button>
+            </div>
             <p class="text-gray-500">
                 Collection by
                 <a th:href="@{/user/{username}(username=${collection.username})}" th:text="${collection.username}"
@@ -33,8 +38,7 @@
                 id="tweetForm" th:if="${isCreator}" class="flex gap-2" th:object="${form}">
 
                 <input id="tweetLink" type="text" placeholder="Paste tweet URL..." name="tweetLink"
-                    th:field="*{tweetLink}"
-                    required
+                    th:field="*{tweetLink}" required
                     pattern="^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$"
                     class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
                 <div th:if="${#fields.hasErrors('tweetLink')}" th:errors="*{tweetLink}"
@@ -70,6 +74,11 @@
 
 
     </main>
+    <script th:inline="javascript">
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+    </script>
+    <script type="text/javascript" th:src="@{/js/likes.js}"></script>
 
 </body>
 

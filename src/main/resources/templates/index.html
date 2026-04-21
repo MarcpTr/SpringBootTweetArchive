@@ -19,7 +19,7 @@
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
-    <div th:replace="fragments :: navbar"></div>
+    <div th:replace="fragments/navbar.html  :: navbar"></div>
     <main class="flex-1 p-6 sm:p-10 space-y-8">
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold">Public collections</h1>
@@ -30,10 +30,16 @@
             </a>
         </div>
 
-             <ul th:replace="~{collection-list :: collectionList(${collections})}"></ul>
+        <ul th:replace="~{collection-list :: collectionList(${collections})}"></ul>
 
 
     </main>
+    <script th:inline="javascript">
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+    </script>
+    <script type="text/javascript" th:src="@{/js/likes.js}"></script>
+
 </body>
 
 </html>
