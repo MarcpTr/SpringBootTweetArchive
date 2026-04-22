@@ -20,7 +20,7 @@
         <h1 class="text-4xl font-extrabold text-gray-900 md:text-5xl"><span th:text="${username}"></span>'s Collections
         </h1>
 
-        <ul th:replace="~{collection-list :: collectionList(${collections})}"></ul>
+        <ul th:replace="~{fragments/collection-list :: collectionList(${collections})}"></ul>
     </main>
     <script th:inline="javascript">
         const csrfToken = /*[[${_csrf.token}]]*/ '';

@@ -30,8 +30,8 @@ public class CollectionService {
     private final UserRepository userRepository;
 
     public List<CollectionPreviewDTO> findBestCollections() {
-        List<Collection> collections = collectionRepository.findByIsPublic(true);
-        return getPreviewByCollections(collections);
+        List<Long> collectionIds = collectionRepository.findPublicIds();
+        return getPreviewByCollections(collectionIds);
     }
 
     public List<CollectionPreviewDTO> findMyCollections() {
@@ -41,8 +41,8 @@ public class CollectionService {
             return List.of();
         }
 
-        List<Collection> collections = collectionRepository.findAllByUserId(userDetails.getId());
-        return getPreviewByCollections(collections);
+        List<Long> collectionIds = collectionRepository.findAllIdsByUserId(userDetails.getId());
+        return getPreviewByCollections(collectionIds);
     }
 
     public List<CollectionPreviewDTO> findUserCollections(String username) {
@@ -50,19 +50,17 @@ public class CollectionService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        List<Collection> collections = collectionRepository.findByIsPublicAndUserId(true, user.getId());
+        List<Long> collectionIds = collectionRepository.findByIsPublicAndUserId(user.getId());
 
-        return getPreviewByCollections(collections);
+        return getPreviewByCollections(collectionIds);
     }
 
-    private List<CollectionPreviewDTO> getPreviewByCollections(List<Collection> collections) {
-        if (collections.isEmpty()) {
+    private List<CollectionPreviewDTO> getPreviewByCollections(List<Long> collectionsIds) {
+        if (collectionsIds.isEmpty()) {
             return List.of();
         }
-        List<Long> ids = collections.stream()
-                .map(Collection::getId)
-                .toList();
-        return collectionRepository.findByIdsWithPreviewTweet(ids);
+
+        return collectionRepository.findByIdsWithPreviewTweet(collectionsIds);
     }
 
     public CollectionDTO viewCollection(long id) {

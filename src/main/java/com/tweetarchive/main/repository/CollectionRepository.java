@@ -9,11 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CollectionRepository extends JpaRepository<Collection, Long> {
-    List<Collection> findByIsPublic(boolean isPublic);
 
-    List<Collection> findAllByUserId(Long id);
+    @Query("SELECT c.id FROM Collection c WHERE c.isPublic = true")
+    List<Long> findPublicIds();
 
-    List<Collection> findByIsPublicAndUserId(boolean isPublic, long userId);
+    @Query("SELECT c.id FROM Collection c WHERE c.user.id = :id")
+    List<Long> findAllIdsByUserId(@Param("id") Long id);
+
+    @Query("SELECT c.id FROM Collection c WHERE c.isPublic = true and c.user.id= :id")
+    List<Long> findByIsPublicAndUserId(@Param("id") Long id);
 
     Optional<Collection> findByIdAndUserId(long colectionId, long userId);
 
@@ -27,14 +31,13 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
                     MAX(t.tweet),
                     COUNT(t.id),
 
-                    (SELECT COUNT(cl)
-                     FROM CollectionLike cl
-                     WHERE cl.collection.id = c.id)
+                    (SELECT COUNT(cl)FROM CollectionLike cl WHERE cl.collection.id = c.id)
                 )
                 FROM Collection c
                 LEFT JOIN Tweet t ON t.collection.id = c.id
                 WHERE c.id IN :ids
-                GROUP BY c.user.username, c.user.id, c.id, c.name
+                GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
             """)
     List<CollectionPreviewDTO> findByIdsWithPreviewTweet(@Param("ids") List<Long> ids);
+
 }

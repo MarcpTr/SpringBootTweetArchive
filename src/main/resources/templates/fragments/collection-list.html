@@ -3,7 +3,7 @@
     <th:block th:if="${collections != null}">
         <th:block th:each="collection : ${collections}">
 
-            <li th:if="${collection != null}" th:replace="~{collection-card :: collectionCard(${collection})}">
+            <li th:if="${collection != null}" th:replace="~{fragments/collection-card.html :: collectionCard(${collection})}">
             </li>
 
         </th:block>
