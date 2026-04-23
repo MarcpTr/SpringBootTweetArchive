@@ -1,0 +1,15 @@
+<ul th:fragment="collectionList(collections)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <th:block th:if="${collections != null}">
+        <th:block th:each="collection : ${collections}">
+
+            <li th:if="${collection != null}" th:replace="~{fragments/dashboard-card.html :: collectionCard(${collection})}">
+            </li>
+
+        </th:block>
+    </th:block>
+
+    <li th:if="${collections == null or #lists.isEmpty(collections)}" class="col-span-full text-center text-gray-400">
+        No collections found
+    </li>
+</ul>

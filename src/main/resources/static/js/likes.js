@@ -20,10 +20,7 @@
                 if (!liked) {
                     await fetch(`/api/collection/${collectionId}/like`, {
                         method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            [csrfHeader]: csrfToken
-                        }
+                        headers: getHeaders()
                     });
 
                     liked = true;

@@ -8,9 +8,12 @@ import com.tweetarchive.main.model.DTO.CreateCollectionForm;
 import com.tweetarchive.main.model.enums.AddTweetResult;
 import com.tweetarchive.main.service.CollectionService;
 import com.tweetarchive.main.service.TweetService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

@@ -31,13 +31,44 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
                     MAX(t.tweet),
                     COUNT(t.id),
 
-                    (SELECT COUNT(cl)FROM CollectionLike cl WHERE cl.collection.id = c.id)
+                    (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
+
+                    CASE
+                        WHEN EXISTS (
+                            SELECT cl2.id
+                            FROM CollectionLike cl2
+                            WHERE cl2.collection.id = c.id
+                            AND cl2.user.id = :userId
+                        )
+                        THEN true
+                        ELSE false
+                    END
                 )
                 FROM Collection c
                 LEFT JOIN Tweet t ON t.collection.id = c.id
                 WHERE c.id IN :ids
                 GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
             """)
-    List<CollectionPreviewDTO> findByIdsWithPreviewTweet(@Param("ids") List<Long> ids);
+    List<CollectionPreviewDTO> findByIdsWithPreviewTweet(
+            @Param("ids") List<Long> ids,
+            @Param("userId") Long userId);
 
+    @Query("""
+                SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
+                    c.user.username,
+                    c.user.id,
+                    c.id,
+                    c.name,
+                    c.isPublic,
+                    MAX(t.tweet),
+                    COUNT(t.id),
+                    (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
+                    false
+                )
+                FROM Collection c
+                LEFT JOIN Tweet t ON t.collection.id = c.id
+                WHERE c.id IN :ids
+                GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
+            """)
+    List<CollectionPreviewDTO> findByIdsWithPreviewTweetNoUser(@Param("ids") List<Long> ids);
 }

@@ -16,6 +16,8 @@
             pointer-events: none;
         }
     </style>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
@@ -34,10 +36,8 @@
 
 
     </main>
-    <script th:inline="javascript">
-        const csrfToken = /*[[${_csrf.token}]]*/ '';
-        const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
-    </script>
+
+    <script type="text/javascript" th:src="@{/js/csrf.js}"></script>
     <script type="text/javascript" th:src="@{/js/likes.js}"></script>
 
 </body>

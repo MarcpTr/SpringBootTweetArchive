@@ -13,6 +13,8 @@ import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,14 +26,28 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class CollectionService {
-
+    private static final String RESET = "\u001B[0m";
+    private static final String RED = "\u001B[31m";
+    private static final String GREEN = "\u001B[32m";
     private final CollectionRepository collectionRepository;
     private final TweetRepository tweetRepository;
     private final UserRepository userRepository;
 
     public List<CollectionPreviewDTO> findBestCollections() {
+    
         List<Long> collectionIds = collectionRepository.findPublicIds();
-        return getPreviewByCollections(collectionIds);
+        List<CollectionPreviewDTO> data = getPreviewByCollections(collectionIds, getCurrentUserId());
+        return data;
+    }
+
+    public List<CollectionPreviewDTO> findUserCollections(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        List<Long> collectionIds = collectionRepository.findByIsPublicAndUserId(user.getId());
+
+        return getPreviewByCollections(collectionIds, getCurrentUserId());
     }
 
     public List<CollectionPreviewDTO> findMyCollections() {
@@ -42,25 +58,20 @@ public class CollectionService {
         }
 
         List<Long> collectionIds = collectionRepository.findAllIdsByUserId(userDetails.getId());
-        return getPreviewByCollections(collectionIds);
+        return getPreviewByCollections(collectionIds, getCurrentUserId());
     }
 
-    public List<CollectionPreviewDTO> findUserCollections(String username) {
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
-
-        List<Long> collectionIds = collectionRepository.findByIsPublicAndUserId(user.getId());
-
-        return getPreviewByCollections(collectionIds);
-    }
-
-    private List<CollectionPreviewDTO> getPreviewByCollections(List<Long> collectionsIds) {
+    private List<CollectionPreviewDTO> getPreviewByCollections(List<Long> collectionsIds, Long userId) {
         if (collectionsIds.isEmpty()) {
             return List.of();
         }
 
-        return collectionRepository.findByIdsWithPreviewTweet(collectionsIds);
+        if (userId == null) {
+            return collectionRepository.findByIdsWithPreviewTweetNoUser(collectionsIds);
+        }
+
+        return collectionRepository.findByIdsWithPreviewTweet(collectionsIds, userId);
+
     }
 
     public CollectionDTO viewCollection(long id) {
@@ -175,5 +186,44 @@ public class CollectionService {
             return ((UserDetails) principal).getUsername();
         }
         return principal.toString();
+    }
+
+    public Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+
+            return null;
+        }
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        return userDetails.getId();
+    }
+
+    /*
+     * private Long getCurrentUserIdOrNull() {
+     * Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+     * 
+     * if (auth == null || !auth.isAuthenticated()) {
+     * return null;
+     * }
+     * 
+     * Object principal = auth.getPrincipal();
+     * 
+     * if (principal instanceof CustomUserDetails userDetails) {
+     * return userDetails.getId();
+     * }
+     * 
+     * return null;
+     * }
+     */
+
+    public Long getCurrentUserIdOrNull() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || auth instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        return userDetails.getId();
     }
 }
