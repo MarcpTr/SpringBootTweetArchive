@@ -93,7 +93,6 @@ public class CollectionRestController {
     public ResponseEntity<Void> like(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails user) {
-                System.out.println(GREEN + "USER: " + user.getId()+ RESET);
         likeService.like(user.getId(), id);
 
         return ResponseEntity.ok().build();

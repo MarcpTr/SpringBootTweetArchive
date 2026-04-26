@@ -36,9 +36,15 @@
     <!-- Footer -->
     <div class="mt-4 flex justify-between text-xs text-gray-400">
         <span th:text="${collection.tweetCount()} + ' tweets'"></span>
-        <button class="like-btn hover:shadow-xl hover:scale-[1.08]  cursor-pointer"  th:classappend="${collection.likedByCurrentUser} ? 'bg-red-400' : ''"
-            th:onclick="|event.stopPropagation(); toggleLike(${collection.collectionId()});|">
-            🤍 <span class="like-count hover:text-sky-400 cursor-pointer" th:text="${collection.likeCount()}"></span>
-        </button>
+   <button 
+    class="like-btn hover:shadow-xl hover:scale-[1.08] cursor-pointer"
+    th:classappend="${collection.likedByCurrentUser} ? 'liked'"
+    th:onclick="|event.stopPropagation(); toggleLike(${collection.collectionId()}, this);|"
+>
+    <span class="like-icon"
+          th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
+    <span class="like-count"
+          th:text="${collection.likeCount()}"></span>
+</button>
     </div>
 </li>

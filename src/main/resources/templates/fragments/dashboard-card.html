@@ -50,6 +50,11 @@
 
     <div class="mt-4 flex justify-between text-xs text-gray-400">
         <span th:text="${collection.tweetCount} + ' tweets'"></span>
-        <span>#dev</span>
+        <button class="like-btn hover:shadow-xl hover:scale-[1.08] cursor-pointer"
+            th:classappend="${collection.likedByCurrentUser} ? 'liked'"
+            th:onclick="|event.stopPropagation(); toggleLike(${collection.collectionId()}, this);|">
+            <span class="like-icon" th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
+            <span class="like-count" th:text="${collection.likeCount()}"></span>
+        </button>
     </div>
 </li>

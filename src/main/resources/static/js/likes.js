@@ -1,51 +1,54 @@
- const loadingLikes = new Set();
+const loadingLikes = new Set();
 
-        async function toggleLike(collectionId) {
-            if (loadingLikes.has(collectionId)) return;
+async function toggleLike(collectionId, button) {
+    if (loadingLikes.has(collectionId)) return;
 
-            const button = document.querySelector(
-                `.like-btn[onclick="event.stopPropagation(); toggleLike(${collectionId});"]`
-            );
+    const countSpan = button.querySelector(".like-count");
+    let liked = button.classList.contains("liked");
+    let likes = parseInt(countSpan.textContent || "0", 10);
 
-            if (!button) return;
+    // Optimistic UI
+    liked = !liked;
+    likes += liked ? 1 : -1;
 
-            const countSpan = button.querySelector(".like-count");
+    updateButton(button, liked, likes);
 
-            let liked = button.classList.contains("liked");
-            let likes = parseInt(countSpan.textContent || "0");
+    loadingLikes.add(collectionId);
+    button.disabled = true;
 
-            loadingLikes.add(collectionId);
+    try {
+        const response = await fetch(`/api/collection/${collectionId}/like`, {
+            method: liked ? "POST" : "DELETE",
+            headers: getHeaders()
+        });
 
-            try {
-                if (!liked) {
-                    await fetch(`/api/collection/${collectionId}/like`, {
-                        method: "POST",
-                        headers: getHeaders()
-                    });
-
-                    liked = true;
-                    likes++;
-
-                    button.classList.add("liked");
-                    button.innerHTML = `❤️ <span class="like-count">${likes}</span>`;
-                } else {
-                    await fetch(`/api/collection/${collectionId}/like`, {
-                        method: "DELETE",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            [csrfHeader]: csrfToken
-                        }
-                    });
-
-                    liked = false;
-                    likes--;
-
-                    button.classList.remove("liked");
-                    button.innerHTML = `🤍 <span class="like-count">${likes}</span>`;
-                }
-            } catch (err) {
-                console.error("Error toggle like:", err);
-            }
-
-            loadingLikes.delete(collectionId);
+        if (!response.ok) {
+            throw new Error("Request failed");
         }
+    } catch (err) {
+        console.error("Error toggle like:", err);
+
+        // rollback UI
+        liked = !liked;
+        likes += liked ? 1 : -1;
+        updateButton(button, liked, likes);
+    } finally {
+        loadingLikes.delete(collectionId);
+        button.disabled = false;
+    }
+}
+
+function updateButton(button, liked, likes) {
+    button.classList.toggle("liked", liked);
+
+    const iconSpan = button.querySelector(".like-icon");
+    const countSpan = button.querySelector(".like-count");
+
+    if (iconSpan) {
+        iconSpan.textContent = liked ? "❤️" : "🤍";
+    }
+
+    if (countSpan) {
+        countSpan.textContent = likes;
+    }
+}

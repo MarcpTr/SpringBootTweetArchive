@@ -11,7 +11,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script defer src="https://analytics.marcpericot.es/script.js"
         data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
-         <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
@@ -22,10 +22,9 @@
         <div class="max-w-2xl mx-auto space-y-4">
             <div class="flex flex-row gap-2">
                 <h1 class="text-3xl font-bold" th:text="${collection.name}"></h1>
-                <button class="like-btn hover:shadow-xl hover:scale-[1.08]  cursor-pointer"
-                    th:onclick="|event.stopPropagation(); toggleLike(${collection.id});|">
-                    🤍
-                </button>
+
+
+
             </div>
             <p class="text-gray-500">
                 Collection by
@@ -34,6 +33,12 @@
                 </a>
                 ·
                 <span th:text="${#lists.size(collection.tweets)}"></span> tweets
+                <button class="like-btn hover:shadow-xl hover:scale-[1.08] cursor-pointer"
+                    th:classappend="${collection.likedByCurrentUser} ? 'liked'"
+                    th:onclick="|event.stopPropagation(); toggleLike(${collection.id}, this);|">
+                    <span class="like-icon" th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
+                    <span class="like-count" th:text="${collection.likesCount}"></span>
+                </button>
             </p>
 
             <form th:action="@{/collection/{collectionId}/add-tweet(collectionId=${collection.id})}" method="post"

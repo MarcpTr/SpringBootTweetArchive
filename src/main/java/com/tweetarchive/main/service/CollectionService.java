@@ -26,15 +26,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class CollectionService {
-    private static final String RESET = "\u001B[0m";
-    private static final String RED = "\u001B[31m";
-    private static final String GREEN = "\u001B[32m";
+
     private final CollectionRepository collectionRepository;
     private final TweetRepository tweetRepository;
     private final UserRepository userRepository;
 
     public List<CollectionPreviewDTO> findBestCollections() {
-    
+
         List<Long> collectionIds = collectionRepository.findPublicIds();
         List<CollectionPreviewDTO> data = getPreviewByCollections(collectionIds, getCurrentUserId());
         return data;
@@ -81,7 +79,6 @@ public class CollectionService {
 
         String currentUsername = getCurrentUsername();
 
-        // Validación de acceso
         if (!collection.isPublic() &&
                 !collection.getUser().getUsername().equals(currentUsername)) {
             throw new CollectionNotFoundException();
@@ -95,6 +92,15 @@ public class CollectionService {
 
         tweetRepository.findAllByCollectionId(id)
                 .ifPresent(dto::setTweets);
+
+        // 👍 limpio y legible
+        var likes = collection.getLikes();
+
+        dto.setLikesCount(likes.size());
+
+        dto.setLikedByCurrentUser(
+                likes.stream()
+                        .anyMatch(like -> like.getUser().getUsername().equals(currentUsername)));
 
         return dto;
     }

@@ -19,4 +19,6 @@ public class CollectionDTO {
     private String username;
     private Long userId;
     private List<Tweet> tweets;
+    private long likesCount;
+    private boolean likedByCurrentUser;
 }
