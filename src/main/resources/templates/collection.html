@@ -63,11 +63,11 @@
                     <span th:text="${#lists.size(collection.tweets)} + ' tweets'"></span>
 
                     <!-- Like -->
-                    <button class="like-btn ml-2 px-3 py-1 rounded-full border hover:bg-gray-100 transition"
+                    <button class="like-btn ml-2 px-3 py-1 rounded-full border hover:bg-gray-100 transition"  th:classappend="${collection.likedByCurrentUser} ? 'liked'"
                         th:onclick="|event.stopPropagation(); toggleLike(${collection.id}, this);|">
 
-                        <span th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
-                        <span th:text="${collection.likesCount}"></span>
+                        <span  class="like-icon" th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
+                        <span class="like-count" th:text="${collection.likesCount}"></span>
                     </button>
                 </div>
             </div>
