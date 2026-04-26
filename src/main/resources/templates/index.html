@@ -24,18 +24,24 @@
 
 <div th:replace="fragments/navbar.html :: navbar"></div>
 
-<main class="flex-1 p-6 sm:p-10 space-y-8">
+<main class="flex-1 px-6 sm:px-10 py-8 space-y-10">
 
-    <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold tracking-tight">Public collections</h1>
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+        <div>
+            <h1 class="text-3xl font-semibold tracking-tight">Collections</h1>
+            <p class="text-sm text-gray-500">Explore what others are saving</p>
+        </div>
 
         <a th:href="@{/collection/create}"
-           class="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow-sm">
+           class="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-xl hover:opacity-90 transition shadow">
             <i class="fas fa-plus"></i>
-            New
+            New collection
         </a>
     </div>
 
+    <!-- Grid -->
     <ul th:replace="~{fragments/collection-list.html :: collectionList(${collections})}"></ul>
 
 </main>
