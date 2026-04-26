@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-
 <head>
     <meta charset="UTF-8">
     <title>Public Collections</title>
@@ -19,28 +18,28 @@
     </style>
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
 
-<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
-    <div th:replace="fragments/navbar.html  :: navbar"></div>
-    <main class="flex-1 p-6 sm:p-10 space-y-8">
-        <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold">Public collections</h1>
+<div th:replace="fragments/navbar.html :: navbar"></div>
 
-            <a th:href="@{/collection/create}"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-                + New
-            </a>
-        </div>
+<main class="flex-1 p-6 sm:p-10 space-y-8">
 
-        <ul th:replace="~{fragments/collection-list.html :: collectionList(${collections})}"></ul>
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold tracking-tight">Public collections</h1>
 
+        <a th:href="@{/collection/create}"
+           class="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition shadow-sm">
+            <i class="fas fa-plus"></i>
+            New
+        </a>
+    </div>
 
-    </main>
+    <ul th:replace="~{fragments/collection-list.html :: collectionList(${collections})}"></ul>
 
+</main>
     <script type="text/javascript" th:src="@{/js/csrf.js}"></script>
     <script type="text/javascript" th:src="@{/js/likes.js}"></script>
-
 </body>
-
 </html>

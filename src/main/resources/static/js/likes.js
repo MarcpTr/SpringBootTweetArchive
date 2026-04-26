@@ -51,4 +51,8 @@ function updateButton(button, liked, likes) {
     if (countSpan) {
         countSpan.textContent = likes;
     }
+
+    // 🔥 NUEVO: feedback visual
+    button.classList.add("scale-110");
+    setTimeout(() => button.classList.remove("scale-110"), 150);
 }

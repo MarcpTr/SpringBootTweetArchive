@@ -14,78 +14,97 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row">
     <div th:replace="fragments/navbar.html :: navbar"></div>
-
     <main class="flex-1 p-6 sm:p-10">
-        <div class="max-w-2xl mx-auto space-y-4">
-            <div class="flex flex-row gap-2">
+
+        <div class="max-w-2xl mx-auto space-y-6">
+
+            <!-- Header -->
+            <div class="space-y-2">
                 <h1 class="text-3xl font-bold" th:text="${collection.name}"></h1>
 
+                <div class="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
+                    <span>by</span>
 
+                    <a th:href="@{/user/{username}(username=${collection.username})}" th:text="${collection.username}"
+                        class="text-blue-500 hover:underline font-medium"></a>
 
+                    <span>·</span>
+
+                    <span th:text="${#lists.size(collection.tweets)} + ' tweets'"></span>
+
+                    <!-- Like -->
+                    <button
+                        class="like-btn flex items-center gap-1 ml-2 px-2 py-1 rounded-md hover:bg-gray-100 transition"
+                        th:classappend="${collection.likedByCurrentUser} ? 'liked'"
+                        th:onclick="|event.stopPropagation(); toggleLike(${collection.id}, this);|">
+
+                        <span class="like-icon" th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
+
+                        <span class="like-count" th:text="${collection.likesCount}"></span>
+                    </button>
+                </div>
             </div>
-            <p class="text-gray-500">
-                Collection by
-                <a th:href="@{/user/{username}(username=${collection.username})}" th:text="${collection.username}"
-                    class="text-blue-500 hover:underline">
-                </a>
-                ·
-                <span th:text="${#lists.size(collection.tweets)}"></span> tweets
-                <button class="like-btn hover:shadow-xl hover:scale-[1.08] cursor-pointer"
-                    th:classappend="${collection.likedByCurrentUser} ? 'liked'"
-                    th:onclick="|event.stopPropagation(); toggleLike(${collection.id}, this);|">
-                    <span class="like-icon" th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
-                    <span class="like-count" th:text="${collection.likesCount}"></span>
-                </button>
-            </p>
 
-            <form th:action="@{/collection/{collectionId}/add-tweet(collectionId=${collection.id})}" method="post"
-                id="tweetForm" th:if="${isCreator}" class="flex gap-2" th:object="${form}">
+            <!-- Form -->
+            <form th:if="${isCreator}"
+                th:action="@{/collection/{collectionId}/add-tweet(collectionId=${collection.id})}" method="post"
+                th:object="${form}" class="flex flex-col sm:flex-row gap-2">
 
-                <input id="tweetLink" type="text" placeholder="Paste tweet URL..." name="tweetLink"
-                    th:field="*{tweetLink}" required
+                <input type="text" th:field="*{tweetLink}" placeholder="Paste tweet URL..." required
                     pattern="^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$"
-                    class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <div th:if="${#fields.hasErrors('tweetLink')}" th:errors="*{tweetLink}"
-                    class="text-red-500 text-sm mt-1"></div>
-                <p th:if="${successMessage}" th:text="${successMessage}" class="text-green-500"></p>
+                    class="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
                     Add
                 </button>
+
+                <!-- errores -->
+                <p th:if="${#fields.hasErrors('tweetLink')}" th:errors="*{tweetLink}"
+                    class="text-red-500 text-sm w-full"></p>
+
+                <p th:if="${successMessage}" th:text="${successMessage}" class="text-green-500 text-sm w-full"></p>
+
             </form>
-            <p id="error-message" style="color: red; display: none;">The entered URL is invalid.</p>
-            <p id="success-message" style="color: green; display: none;"></p>
 
-            <ul class="mt-8 flex flex-col items-center space-y-6">
-                <li th:each="tweet : ${collection.tweets}"
-                    th:if="${collection.tweets != null and !#lists.isEmpty(collection.tweets)}"
-                    class="w-full max-w-2xl bg-white p-4 rounded-xl shadow relative group">
+            <!-- Tweets -->
+            <ul class="space-y-6">
 
-                    <button th:if="${isCreator}" onClick="removeTweet(this.id)" th:id="${tweet.id}"
-                        class="absolute top-2 right-2  group-hover:opacity-100 transition text-red-500 hover:text-red-700">
+                <li th:each="tweet : ${collection.tweets}" class="bg-white p-4 rounded-xl shadow relative group">
+
+                    <button th:if="${isCreator}" th:id="${tweet.id}" onclick="removeTweet(this.id)"
+                        class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-red-500 hover:text-red-700">
+
                         <i class="fas fa-trash"></i>
                     </button>
-                    <div class="flex justify-center">
-                        <blockquote class="twitter-tweet"> <a
-                                th:href="'https://twitter.com/user/status/' + ${tweet.tweet.substring(tweet.tweet.lastIndexOf('/') + 1)}">Loading
-                                tweet</a></blockquote>
+
+                    <div class="overflow-hidden rounded-lg">
+                        <blockquote class="twitter-tweet">
+                            <a
+                                th:href="'https://twitter.com/user/status/' + ${tweet.tweet.substring(tweet.tweet.lastIndexOf('/') + 1)}">
+                                Loading tweet
+                            </a>
+                        </blockquote>
                     </div>
+
                 </li>
 
-                <li th:if="${collection.tweets == null or #lists.isEmpty(collection.tweets)}">
-                    <p>No tweets available.</p>
+                <li th:if="${collection.tweets == null or #lists.isEmpty(collection.tweets)}"
+                    class="text-center text-gray-400">
+                    No tweets available
                 </li>
+
             </ul>
 
-
+        </div>
     </main>
     <script type="text/javascript" th:src="@{/js/csrf.js}"></script>
     <script type="text/javascript" th:src="@{/js/likes.js}"></script>
-
 </body>
 
 </html>
