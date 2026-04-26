@@ -14,6 +14,7 @@ import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,9 +34,9 @@ public class CollectionService {
 
     public List<CollectionPreviewDTO> findBestCollections() {
 
-        List<Long> collectionIds = collectionRepository.findPublicIds();
-        List<CollectionPreviewDTO> data = getPreviewByCollections(collectionIds, getCurrentUserId());
-        return data;
+        return collectionRepository.findTopCollections(
+                getCurrentUserId(),
+                PageRequest.of(0, 10));
     }
 
     public List<CollectionPreviewDTO> findUserCollections(String username) {
