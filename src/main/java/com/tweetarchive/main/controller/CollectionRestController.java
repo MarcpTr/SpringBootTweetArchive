@@ -45,7 +45,6 @@ public class CollectionRestController {
     @DeleteMapping("/{collectionId}")
     public ResponseEntity<?> deleteCollection(@PathVariable long collectionId,
             @AuthenticationPrincipal CustomUserDetails user) {
-            System.out.println("Entro en rest");
         collectionService.deleteCollection(collectionId);
         return ResponseEntity.ok(Map.of(
                 "status", "success",
