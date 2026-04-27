@@ -3,12 +3,14 @@ package com.tweetarchive.main.service;
 import com.tweetarchive.main.exceptions.CollectionNotFoundException;
 import com.tweetarchive.main.exceptions.ForbiddenOperationException;
 import com.tweetarchive.main.exceptions.InvalidCredentialsException;
+import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.exceptions.UserNotFoundException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
 import com.tweetarchive.main.model.DTO.CollectionPreviewDTO;
+import com.tweetarchive.main.model.DTO.VisibilityResponse;
 import com.tweetarchive.main.repository.CollectionLikeRepository;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
@@ -23,7 +25,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -109,7 +113,7 @@ public class CollectionService {
     }
 
     @Transactional
-    public void changeVisibility(long collectionId) {
+    public VisibilityResponse changeVisibility(long collectionId) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -127,6 +131,8 @@ public class CollectionService {
         }
 
         collection.setPublic(!collection.isPublic());
+        collection= collectionRepository.save(collection);
+        return new VisibilityResponse(collection.getId(), collection.isPublic()); 
     }
 
     public Long createCollection(String collectionName, boolean isPublic) {
@@ -165,12 +171,14 @@ public class CollectionService {
 
     @Transactional
     public void deleteCollection(Long collectionId) {
-            System.out.println("Entro en service");
+        Map<String, String> errors = new HashMap<>();
 
         Collection collection = collectionRepository
-                .findByIdAndUserId(collectionId, getCurrentUserId())
-                .orElseThrow(() -> new RuntimeException("Collection no encontrada o no pertenece al usuario"));
-            System.out.println("existe y es el user");
+                .findByIdAndUserId(collectionId, getCurrentUserId()).
+                orElseThrow(() -> {
+            errors.put("COLLECTION", "LA coleccion no existe.");
+            return new ResourceNotFoundException(errors);
+        });
 
         tweetRepository.deleteByCollectionId(collectionId);
 

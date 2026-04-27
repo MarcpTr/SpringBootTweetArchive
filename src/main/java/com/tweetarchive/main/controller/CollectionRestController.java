@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.Tweet;
+import com.tweetarchive.main.model.DTO.ApiResponse;
+import com.tweetarchive.main.model.DTO.LikeResponse;
+import com.tweetarchive.main.model.DTO.VisibilityResponse;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.service.CollectionLikeService;
@@ -32,13 +35,9 @@ public class CollectionRestController {
     private final CollectionLikeService likeService;
 
     @PutMapping("/{collectionId}/visibility")
-    public ResponseEntity<?> changeVisibility(@PathVariable long collectionId) {
+    public ResponseEntity<ApiResponse<VisibilityResponse>> changeVisibility(@PathVariable long collectionId) {
 
-        collectionService.changeVisibility(collectionId);
-
-        return ResponseEntity.ok(Map.of(
-                "status", "success",
-                "message", "Visibility updated"));
+        return ResponseEntity.ok(ApiResponse.ok(collectionService.changeVisibility(collectionId)));
 
     }
 
@@ -46,9 +45,7 @@ public class CollectionRestController {
     public ResponseEntity<?> deleteCollection(@PathVariable long collectionId,
             @AuthenticationPrincipal CustomUserDetails user) {
         collectionService.deleteCollection(collectionId);
-        return ResponseEntity.ok(Map.of(
-                "status", "success",
-                "message", "Collection deleted"));
+              return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{collectionId}/tweets/{tweetId}")
@@ -56,7 +53,6 @@ public class CollectionRestController {
             @PathVariable Long collectionId,
             @PathVariable Long tweetId,
             @AuthenticationPrincipal CustomUserDetails user) {
-        Map<String, Object> response = new HashMap<>();
 
         Collection collection = collectionRepository.findById(collectionId)
                 .orElseThrow(() -> new RuntimeException("Collection not found"));
@@ -77,19 +73,16 @@ public class CollectionRestController {
 
         tweetService.delete(tweet);
 
-        response.put("status", "success");
-        response.put("message", "Tweet removed from collection");
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<Void> like(
-            @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails user) {
-        likeService.like(user.getId(), id);
+    public ResponseEntity<ApiResponse<LikeResponse>> like(
+            @PathVariable Long id) {
+      
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.ok(likeService.like(id)));
+
     }
 
     @DeleteMapping("/{id}/like")
@@ -97,6 +90,6 @@ public class CollectionRestController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails user) {
         likeService.unlike(user.getId(), id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
