@@ -50,7 +50,7 @@ public class AuthController {
      * @param model  modelo utilizado para pasar atributos a la vista
      * @return nombre de la vista de login ({@code "login"})
      */
-    @GetMapping("/login")
+    @GetMapping("login")
     public String login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout, Model model) {
                 if (error != null) {
@@ -63,7 +63,7 @@ public class AuthController {
         return "login";
     }
 
-    @GetMapping("/register")
+    @GetMapping("register")
     public String registerForm(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest());
         return "register";
@@ -100,7 +100,7 @@ public class AuthController {
      * @throws UserAlreadyExistsException si el username o email ya están
      *                                    registrados
      */
-    @PostMapping("/register")
+    @PostMapping("register")
     public String register(
             @Valid @ModelAttribute("registerRequest") RegisterRequest request,
             BindingResult bindingResult, HttpServletRequest httpRequest) {

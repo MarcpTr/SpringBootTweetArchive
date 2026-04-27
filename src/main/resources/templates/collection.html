@@ -93,27 +93,30 @@
 
             </form> -->
             <form th:if="${isCreator}" th:action="@{/collection/{id}/add-tweet(id=${collection.id})}" method="post"
-                th:object="${form}" class="flex gap-2 bg-white p-3 rounded-xl border">
+                th:object="${form}" class="flex flex-col gap-2 bg-white p-3 rounded-xl border">
 
-                <input type="text" th:field="*{tweetLink}" placeholder="Paste tweet URL..."
-                    class="flex-1 px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-black">
+                <div class="flex gap-2">
+                    <input type="text" th:field="*{tweetLink}" placeholder="Paste tweet URL..."
+                        class="flex-1 px-3 py-2 rounded-lg outline-none focus:ring-2 focus:ring-black">
+
+                    <button class="bg-black text-white px-4 rounded-lg">
+                        Add
+                    </button>
+                </div>
+
                 <p th:if="${#fields.hasErrors('tweetLink')}" th:errors="*{tweetLink}"
                     class="text-red-500 text-sm w-full"></p>
 
                 <p th:if="${successMessage}" th:text="${successMessage}" class="text-green-500 text-sm w-full"></p>
 
-                <button class="bg-black text-white px-4 rounded-lg">
-                    Add
-                </button>
             </form>
-
             <!-- Tweets -->
             <ul class="space-y-6">
 
                 <li th:each="tweet : ${collection.tweets}" class="bg-white p-4 rounded-xl shadow relative group">
 
                     <button th:if="${isCreator}" th:onclick="|removeTweet(${collection.id}, ${tweet.id}, this)|"
-                        class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-red-500 hover:text-red-700">
+                        class="absolute top-2 right-2 group-hover:opacity-100 tranition text-red-500 hover:text-red-700">
                         <i class="fas fa-trash"></i>
                     </button>
 
@@ -138,29 +141,29 @@
         </div>
     </main>
     <script>
-    function removeTweet(collectionId, tweetId, button) {
-    const urlEndpoint = `/api/collection/${collectionId}/tweets/${tweetId}`;
+        function removeTweet(collectionId, tweetId, button) {
+            const urlEndpoint = `/api/collection/${collectionId}/tweets/${tweetId}`;
 
-    fetch(urlEndpoint, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            [csrfHeader]: csrfToken
+            fetch(urlEndpoint, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Error al eliminar");
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        button.closest("li").remove();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Error al eliminar");
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === 'success') {
-            button.closest("li").remove();
-        }
-    })
-    .catch(error => {
-        console.error(error);
-    });
-}
     </script>
     <script type="text/javascript" th:src="@{/js/csrf.js}"></script>
     <script type="text/javascript" th:src="@{/js/likes.js}"></script>
