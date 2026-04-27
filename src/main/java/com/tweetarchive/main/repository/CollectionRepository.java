@@ -21,7 +21,8 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     @Query("SELECT c.id FROM Collection c WHERE c.isPublic = true and c.user.id= :id")
     List<Long> findByIsPublicAndUserId(@Param("id") Long id);
 
-    Optional<Collection> findByIdAndUserId(long colectionId, long userId);
+
+    Optional<Collection> findByIdAndUserId(Long colectionId, Long userId);
 
     @Query("""
                 SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(

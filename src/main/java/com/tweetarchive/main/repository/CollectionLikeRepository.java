@@ -15,4 +15,6 @@ public interface CollectionLikeRepository extends JpaRepository<CollectionLike, 
     long countByCollectionId(Long collectionId);
 
     List<CollectionLike> findByUserId(Long userId);
+
+    void deleteByCollectionId(Long collectionId);
 }

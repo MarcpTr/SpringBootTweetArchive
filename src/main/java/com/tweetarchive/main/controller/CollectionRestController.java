@@ -15,6 +15,7 @@ import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.repository.CollectionRepository;
+import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.service.CollectionLikeService;
 import com.tweetarchive.main.service.CollectionService;
 import com.tweetarchive.main.service.TweetService;
@@ -27,6 +28,7 @@ public class CollectionRestController {
     private final CollectionService collectionService;
     private final TweetService tweetService;
     private final CollectionRepository collectionRepository;
+    private final TweetRepository tweetRepository;
     private final CollectionLikeService likeService;
 
     @PutMapping("/{collectionId}/visibility")
@@ -41,10 +43,10 @@ public class CollectionRestController {
     }
 
     @DeleteMapping("/{collectionId}")
-    public ResponseEntity<?> deleteCollection(@PathVariable long collectionId) {
-
+    public ResponseEntity<?> deleteCollection(@PathVariable long collectionId,
+            @AuthenticationPrincipal CustomUserDetails user) {
+            System.out.println("Entro en rest");
         collectionService.deleteCollection(collectionId);
-
         return ResponseEntity.ok(Map.of(
                 "status", "success",
                 "message", "Collection deleted"));
@@ -55,12 +57,7 @@ public class CollectionRestController {
             @PathVariable Long collectionId,
             @PathVariable Long tweetId,
             @AuthenticationPrincipal CustomUserDetails user) {
-        System.out.println(user.getUsername());
         Map<String, Object> response = new HashMap<>();
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
 
         Collection collection = collectionRepository.findById(collectionId)
                 .orElseThrow(() -> new RuntimeException("Collection not found"));
@@ -86,9 +83,7 @@ public class CollectionRestController {
 
         return ResponseEntity.ok(response);
     }
-  private static final String RESET = "\u001B[0m";
-    private static final String RED = "\u001B[31m";
-    private static final String GREEN = "\u001B[32m";
+
     @PostMapping("/{id}/like")
     public ResponseEntity<Void> like(
             @PathVariable Long id,

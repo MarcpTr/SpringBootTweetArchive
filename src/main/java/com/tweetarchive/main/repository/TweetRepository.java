@@ -9,4 +9,5 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
    
     Optional<Tweet> findByTweetAndCollectionId(String tweet, long collectionId);
     Optional<List<Tweet>> findAllByCollectionId(Long id);
+    void deleteByCollectionId(long collectionId);
 }

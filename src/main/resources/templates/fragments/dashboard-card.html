@@ -1,4 +1,4 @@
-<li th:fragment="collectionCard(collection)"
+<li th:fragment="collectionCard(collection)" th:id="'collection-' + ${collection.collectionId}"
     class="bg-white  p-5 rounded-xl shadow hover:shadow-xl hover:scale-[1.02] transition cursor-pointer relative"
     th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId})}'|">
 

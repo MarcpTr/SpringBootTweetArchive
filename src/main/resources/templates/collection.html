@@ -73,25 +73,6 @@
                 </div>
             </div>
 
-            <!-- Form -->
-            <!-- <form th:if="${isCreator}"
-                th:action="@{/collection/{collectionId}/add-tweet(collectionId=${collection.id})}" method="post"
-                th:object="${form}" class="flex flex-col sm:flex-row gap-2">
-
-                <input type="text" th:field="*{tweetLink}" placeholder="Paste tweet URL..." required
-                    pattern="^(https?:\/\/(?:www\.)?(?:x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+)$"
-                    class="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
-
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-                    Add
-                </button>
-
-                <p th:if="${#fields.hasErrors('tweetLink')}" th:errors="*{tweetLink}"
-                    class="text-red-500 text-sm w-full"></p>
-
-                <p th:if="${successMessage}" th:text="${successMessage}" class="text-green-500 text-sm w-full"></p>
-
-            </form> -->
             <form th:if="${isCreator}" th:action="@{/collection/{id}/add-tweet(id=${collection.id})}" method="post"
                 th:object="${form}" class="flex flex-col gap-2 bg-white p-3 rounded-xl border">
 
@@ -142,6 +123,9 @@
     </main>
     <script>
         function removeTweet(collectionId, tweetId, button) {
+            if (!confirm("¿Seguro que quieres eliminar este tweet?")) {
+        return;
+    }
             const urlEndpoint = `/api/collection/${collectionId}/tweets/${tweetId}`;
 
             fetch(urlEndpoint, {

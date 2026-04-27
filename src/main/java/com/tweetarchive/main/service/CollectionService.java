@@ -9,6 +9,7 @@ import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
 import com.tweetarchive.main.model.DTO.CollectionPreviewDTO;
+import com.tweetarchive.main.repository.CollectionLikeRepository;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.repository.UserRepository;
@@ -31,6 +32,7 @@ public class CollectionService {
     private final CollectionRepository collectionRepository;
     private final TweetRepository tweetRepository;
     private final UserRepository userRepository;
+    private final CollectionLikeRepository collectionLikeRepository;
 
     public List<CollectionPreviewDTO> findBestCollections() {
 
@@ -161,25 +163,18 @@ public class CollectionService {
         collectionRepository.save(collection);
     }
 
-    public void delete(Collection collection) {
-        collectionRepository.delete(collection);
-    }
-
     @Transactional
-    public void deleteCollection(long collectionId) {
+    public void deleteCollection(Long collectionId) {
+            System.out.println("Entro en service");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Collection collection = collectionRepository
+                .findByIdAndUserId(collectionId, getCurrentUserId())
+                .orElseThrow(() -> new RuntimeException("Collection no encontrada o no pertenece al usuario"));
+            System.out.println("existe y es el user");
 
-        if (!(auth.getPrincipal() instanceof CustomUserDetails user)) {
-            throw new ForbiddenOperationException("Unauthorized");
-        }
+        tweetRepository.deleteByCollectionId(collectionId);
 
-        Collection collection = collectionRepository.findById(collectionId)
-                .orElseThrow(CollectionNotFoundException::new);
-
-        if (!collection.getUser().getId().equals(user.getId())) {
-            throw new ForbiddenOperationException("You are not the owner");
-        }
+        collectionLikeRepository.deleteByCollectionId(collectionId);
 
         collectionRepository.delete(collection);
     }
@@ -204,24 +199,6 @@ public class CollectionService {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         return userDetails.getId();
     }
-
-    /*
-     * private Long getCurrentUserIdOrNull() {
-     * Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-     * 
-     * if (auth == null || !auth.isAuthenticated()) {
-     * return null;
-     * }
-     * 
-     * Object principal = auth.getPrincipal();
-     * 
-     * if (principal instanceof CustomUserDetails userDetails) {
-     * return userDetails.getId();
-     * }
-     * 
-     * return null;
-     * }
-     */
 
     public Long getCurrentUserIdOrNull() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
