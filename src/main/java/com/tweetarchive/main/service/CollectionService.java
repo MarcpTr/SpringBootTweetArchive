@@ -7,6 +7,7 @@ import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.exceptions.UserNotFoundException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
+import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
 import com.tweetarchive.main.model.DTO.CollectionPreviewDTO;
@@ -17,6 +18,7 @@ import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -131,8 +133,8 @@ public class CollectionService {
         }
 
         collection.setPublic(!collection.isPublic());
-        collection= collectionRepository.save(collection);
-        return new VisibilityResponse(collection.getId(), collection.isPublic()); 
+        collection = collectionRepository.save(collection);
+        return new VisibilityResponse(collection.getId(), collection.isPublic());
     }
 
     public Long createCollection(String collectionName, boolean isPublic) {
@@ -170,15 +172,38 @@ public class CollectionService {
     }
 
     @Transactional
+    public void deleteTweet(Long collectionId, Long tweetId) {
+        Map<String, String> errors = new HashMap<>();
+        Long userId = getCurrentUserId();
+        Tweet tweet = tweetRepository.findById(tweetId)
+                .orElseThrow(() -> {
+                    errors.put("Tweet", "El tweet no existe.");
+                    return new ResourceNotFoundException(errors);
+                });
+
+        // Verificar que pertenece a la colección
+        if (!tweet.getCollection().getId().equals(collectionId)) {
+            errors.put("Tweet", "No pertenece a la collection");
+            throw new ResourceNotFoundException(errors);
+        }
+
+        // Verificar ownership
+        if (!tweet.getCollection().getUser().getId().equals(userId)) {
+            throw new InvalidCredentialsException();
+        }
+
+        tweetRepository.delete(tweet);
+    }
+
+    @Transactional
     public void deleteCollection(Long collectionId) {
         Map<String, String> errors = new HashMap<>();
 
         Collection collection = collectionRepository
-                .findByIdAndUserId(collectionId, getCurrentUserId()).
-                orElseThrow(() -> {
-            errors.put("COLLECTION", "LA coleccion no existe.");
-            return new ResourceNotFoundException(errors);
-        });
+                .findByIdAndUserId(collectionId, getCurrentUserId()).orElseThrow(() -> {
+                    errors.put("COLLECTION", "LA coleccion no existe.");
+                    return new ResourceNotFoundException(errors);
+                });
 
         tweetRepository.deleteByCollectionId(collectionId);
 
@@ -218,4 +243,5 @@ public class CollectionService {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         return userDetails.getId();
     }
+
 }

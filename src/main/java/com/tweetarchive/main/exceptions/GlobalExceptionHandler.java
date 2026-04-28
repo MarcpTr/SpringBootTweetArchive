@@ -68,6 +68,7 @@ public class GlobalExceptionHandler {
                    ApiResponse.fail("Resource not found", "El recurso no se encontro.", null)
             );
     }
+
     @ExceptionHandler(Exception.class)
     public Object handleGeneric(
             HttpServletRequest request,

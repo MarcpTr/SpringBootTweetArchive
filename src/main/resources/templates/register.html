@@ -31,7 +31,7 @@
         <input type="text" id="username" th:field="*{username}" placeholder="Choose a username"
           class="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
           required autofocus />
-        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+        <div class="text-red-400" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
         </div>
       </div>
 
@@ -41,7 +41,7 @@
         <input type="text" id="email" th:field="*{email}" placeholder="example@email.com"
           class="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
           required autofocus />
-        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+        <div class="text-red-400"  th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
         </div>
       </div>
 
@@ -52,7 +52,7 @@
         <input type="password" id="password" th:field="*{password}" placeholder="Create a password"
           class="w-full p-4 border border-gray-300 rounded-xl shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
           required />
-        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+        <div class="text-red-400"  th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
         </div>
 
          <!-- Submit -->

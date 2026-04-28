@@ -124,8 +124,9 @@
     <script>
         function removeTweet(collectionId, tweetId, button) {
             if (!confirm("¿Seguro que quieres eliminar este tweet?")) {
-        return;
-    }
+                return;
+            }
+
             const urlEndpoint = `/api/collection/${collectionId}/tweets/${tweetId}`;
 
             fetch(urlEndpoint, {
@@ -135,17 +136,26 @@
                     [csrfHeader]: csrfToken
                 }
             })
-                .then(response => {
-                    if (!response.ok) throw new Error("Error al eliminar");
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === 'success') {
+                .then(async response => {
+
+                    if (response.status === 204) {
                         button.closest("li").remove();
+                        return;
                     }
+
+                    let errorData;
+                    try {
+                        errorData = await response.json();
+                    } catch (e) {
+                        throw new Error("Error inesperado del servidor");
+                    }
+
+                    const message = errorData?.error?.message || "Error al eliminar";
+                    throw new Error(message);
                 })
                 .catch(error => {
                     console.error(error);
+                    alert(error.message);
                 });
         }
     </script>

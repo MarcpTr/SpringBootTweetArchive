@@ -1,6 +1,5 @@
 package com.tweetarchive.main.service;
 
-import com.tweetarchive.main.exceptions.UserAlreadyExistsException;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.model.DTO.RegisterRequest;
@@ -13,6 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,28 +26,31 @@ public class UserService implements UserDetailsService {
 
  
 
-    @Transactional
-    public void registerAndLogin(RegisterRequest request) {
+       public Map<String, String> validateRegister(RegisterRequest request) {
+        Map<String, String> errors = new HashMap<>();
 
-        // 1. Validaciones de negocio
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new UserAlreadyExistsException("username", "El usuario ya existe");
+            errors.put("username", "username.alreadyexist");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new UserAlreadyExistsException("email", "El email ya está en uso");
+            errors.put("email", "email.alreadyexist");
         }
 
-        // 2. Crear entidad
+        return errors;
+    }
+
+    @Transactional
+    public void registerAndLogin(RegisterRequest request) {
+
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_USER)
                 .build();
-        // 3. Persistir
+
         userRepository.save(user);
-   
     }
 
     public Optional<User> findByUsername(String username) {

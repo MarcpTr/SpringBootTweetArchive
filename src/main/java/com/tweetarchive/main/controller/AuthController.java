@@ -1,11 +1,13 @@
 package com.tweetarchive.main.controller;
 
-import com.tweetarchive.main.exceptions.UserAlreadyExistsException;
 import com.tweetarchive.main.model.DTO.RegisterRequest;
 import com.tweetarchive.main.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,7 +55,7 @@ public class AuthController {
     @GetMapping("login")
     public String login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout, Model model) {
-                if (error != null) {
+        if (error != null) {
             model.addAttribute("error", "Usuario o contraseña incorrectos");
         }
 
@@ -97,33 +99,23 @@ public class AuthController {
      *         <li>{@code "redirect:/"} si el registro es exitoso</li>
      *         </ul>
      *
-     * @throws UserAlreadyExistsException si el username o email ya están
-     *                                    registrados
      */
     @PostMapping("register")
     public String register(
             @Valid @ModelAttribute("registerRequest") RegisterRequest request,
             BindingResult bindingResult, HttpServletRequest httpRequest) {
+        // 1. Validación de negocio SIEMPRE (aunque haya errores de @Valid)
+        Map<String, String> errors = userService.validateRegister(request);
 
-        // 1. Validación de formato (DTO)
+        errors.forEach((field, messageCode) -> bindingResult.rejectValue(field, messageCode));
+
+        // 2. Si hay cualquier error (de ambos tipos), volver al form
         if (bindingResult.hasErrors()) {
             return "register";
         }
 
-        // 2. Delegación a lógica de negocio
-        try {
-            userService.registerAndLogin(request);
-        } catch (UserAlreadyExistsException ex) {
-
-            // Mapear error al campo correcto
-            if (ex.getField().equals("username")) {
-                bindingResult.rejectValue("username", "error.user", ex.getMessage());
-            } else if (ex.getField().equals("email")) {
-                bindingResult.rejectValue("email", "error.user", ex.getMessage());
-            }
-
-            return "register";
-        }
+        // 3. Guardar
+        userService.registerAndLogin(request);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
 

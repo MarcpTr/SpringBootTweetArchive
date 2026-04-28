@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TweetRepository extends JpaRepository<Tweet, Long> {
-   
+
     Optional<Tweet> findByTweetAndCollectionId(String tweet, long collectionId);
+
     Optional<List<Tweet>> findAllByCollectionId(Long id);
+
     void deleteByCollectionId(long collectionId);
+
+    Optional<Tweet> findById(Long tweetId);
 }

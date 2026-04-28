@@ -10,14 +10,11 @@ import lombok.Setter;
 @Setter
 public class RegisterRequest {
   @NotBlank(message = "{username.required}")
-  @Size(min = 3, message = "{username.size}")
-  @Size(max = 12, message = "{username.size}")
+  @Size(min = 3, max = 12, message = "{username.size}")
   private String username;
 
   @NotBlank(message = "{password.required}")
-  @Size(min = 6, message = "{password.size}")
-  @Size(max = 20, message = "{password.size}")
-
+  @Size(min = 6, max = 20, message = "{password.size}")
   private String password;
   @Email
   private String email;

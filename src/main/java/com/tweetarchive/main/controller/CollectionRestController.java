@@ -45,7 +45,7 @@ public class CollectionRestController {
     public ResponseEntity<?> deleteCollection(@PathVariable long collectionId,
             @AuthenticationPrincipal CustomUserDetails user) {
         collectionService.deleteCollection(collectionId);
-              return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{collectionId}/tweets/{tweetId}")
@@ -53,33 +53,14 @@ public class CollectionRestController {
             @PathVariable Long collectionId,
             @PathVariable Long tweetId,
             @AuthenticationPrincipal CustomUserDetails user) {
-
-        Collection collection = collectionRepository.findById(collectionId)
-                .orElseThrow(() -> new RuntimeException("Collection not found"));
-
-        // Verificar propietario
-        if (!collection.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        Tweet tweet = tweetService.findById(tweetId)
-                .orElseThrow(() -> new RuntimeException("Tweet not found"));
-
-        // Verificar pertenencia
-        if (!tweet.getCollection().getId().equals(collectionId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Tweet does not belong to this collection"));
-        }
-
-        tweetService.delete(tweet);
-
+                collectionService.deleteTweet(collectionId, tweetId);
         return ResponseEntity.noContent().build();
+
     }
 
     @PostMapping("/{id}/like")
     public ResponseEntity<ApiResponse<LikeResponse>> like(
             @PathVariable Long id) {
-      
 
         return ResponseEntity.ok(ApiResponse.ok(likeService.like(id)));
 
