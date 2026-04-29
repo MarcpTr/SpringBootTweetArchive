@@ -13,14 +13,9 @@
     <!-- Preview del tweet -->
     <div class="mt-4 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
 
-        <div class="tweet-wrapper relative w-full h-full" th:if="${collection.previewTweet() != null}">
+        <div class="tweet-wrapper relative w-full h-full" th:if="${collection.previewEmbedHtml() != null}">
 
-            <blockquote class="twitter-tweet">
-                <a
-                    th:href="'https://twitter.com/user/status/' + ${collection.previewTweet().substring(collection.previewTweet().lastIndexOf('/') + 1)}">
-                    Loading preview
-                </a>
-            </blockquote>
+            <div th:utext="${collection.previewEmbedHtml()}"></div>
 
             <!-- Overlay -->
             <div class="absolute inset-0 z-20 cursor-pointer"
@@ -28,7 +23,7 @@
             </div>
         </div>
 
-        <span th:if="${collection.previewTweet() == null}" class="text-gray-400 text-sm">
+        <span th:if="${collection.previewEmbedHtml() == null}" class="text-gray-400 text-sm">
             No preview
         </span>
     </div>
@@ -36,16 +31,11 @@
     <!-- Footer -->
     <div class="mt-4 flex justify-between text-xs text-gray-400">
         <span th:text="${collection.tweetCount()} + ' tweets'"></span>
-   <button 
-    class="like-btn hover:shadow-xl hover:scale-[1.08] cursor-pointer"
-    th:classappend="${collection.likedByCurrentUser} ? 'liked'"
-    th:onclick="|event.stopPropagation(); toggleLike(${collection.collectionId()}, this);|"
->
-    <span class="like-icon"
-          th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
-    <span class="like-count"
-          th:text="${collection.likeCount()}"></span>
-</button>
+        <button th:disabled="${!#authorization.expression('isAuthenticated()')}" class="like-btn hover:shadow-xl hover:scale-[1.08] cursor-pointer"
+            th:classappend="${collection.likedByCurrentUser} ? 'liked'"
+            th:onclick="|event.stopPropagation(); toggleLike(${collection.collectionId()}, this);|">
+            <span class="like-icon" th:text="${collection.likedByCurrentUser} ? '❤️' : '🤍'"></span>
+            <span class="like-count" th:text="${collection.likeCount()}"></span>
+        </button>
     </div>
 </li>
-

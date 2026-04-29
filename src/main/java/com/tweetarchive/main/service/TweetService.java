@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -27,18 +28,16 @@ public class TweetService {
     private final TweetRepository tweetRepository;
     private final CollectionRepository collectionRepository;
     private final TweetContentRepository tweetContentRepository;
-    
+
     public Optional<Tweet> findById(long id) {
         return tweetRepository.findById(id);
     }
 
     public AddTweetResult addTweetToCollection(long collectionId, String tweetLink) {
-
         Collection collection = collectionRepository
                 .findByIdAndUserId(collectionId, getUserId())
                 .orElseThrow(CollectionNotFoundException::new);
 
-        // Evitar duplicado en la misma colección (tu lógica actual)
         if (tweetRepository.findByTweetAndCollectionId(tweetLink, collectionId).isPresent()) {
             return AddTweetResult.ALREADY_EXISTS;
         }
@@ -56,15 +55,21 @@ public class TweetService {
                         newContent.setCreatedAt(LocalDateTime.now());
 
                         String html = obtenerEmbedHtml(tweetLink);
-                        newContent.setEmbedHtml(html);
 
+                        if (html == null) {
+
+                            throw new IllegalStateException("TWEET_NOT_FOUND");
+                        }
+
+                        newContent.setEmbedHtml(html);
                         return tweetContentRepository.save(newContent);
                     });
 
-        } catch (DataIntegrityViolationException e) {
-            // 🔥 Caso carrera: otro hilo lo creó justo antes
-            content = tweetContentRepository.findByTweetId(tweetId)
-                    .orElseThrow(() -> e);
+        } catch (IllegalStateException e) {
+            if ("TWEET_NOT_FOUND".equals(e.getMessage())) {
+                return AddTweetResult.NOT_FOUND;
+            }
+            throw e;
         }
 
         // Crear el Tweet (tu entidad actual)
@@ -86,16 +91,29 @@ public class TweetService {
     public void delete(Tweet tweet) {
         tweetRepository.delete(tweet);
     }
-private String extraerId(String url) {
-    return url.substring(url.lastIndexOf("/") + 1);
-}
+
+    private String extraerId(String url) {
+        return url.substring(url.lastIndexOf("/") + 1);
+    }
+
     public String obtenerEmbedHtml(String tweetUrl) {
-        String oembedUrl = "https://publish.twitter.com/oembed?url=" + tweetUrl;
+        try {
+            String oembedUrl = "https://publish.twitter.com/oembed?url=" + tweetUrl;
 
-        RestTemplate restTemplate = new RestTemplate();
-        Map<String, Object> response = restTemplate.getForObject(oembedUrl, Map.class);
+            RestTemplate restTemplate = new RestTemplate();
+            Map<String, Object> response = restTemplate.getForObject(oembedUrl, Map.class);
 
-        return (String) response.get("html");
+            if (response == null || response.get("html") == null) {
+                return null;
+            }
+
+            return (String) response.get("html");
+
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private Long getUserId() {

@@ -6,7 +6,7 @@ public record CollectionPreviewDTO(
         Long collectionId,
         String collectionName,
         boolean isPublic,
-        String previewTweet,
+        String previewEmbedHtml,
         Long tweetCount,
         Long likeCount,
         boolean likedByCurrentUser) {

@@ -11,6 +11,7 @@ import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
 import com.tweetarchive.main.model.DTO.CollectionPreviewDTO;
+import com.tweetarchive.main.model.DTO.TweetDTO;
 import com.tweetarchive.main.model.DTO.VisibilityResponse;
 import com.tweetarchive.main.repository.CollectionLikeRepository;
 import com.tweetarchive.main.repository.CollectionRepository;
@@ -81,38 +82,37 @@ public class CollectionService {
 
     }
 
-    public CollectionDTO viewCollection(long id) {
+public CollectionDTO viewCollection(long id) {
 
-        Collection collection = collectionRepository.findById(id)
-                .orElseThrow(CollectionNotFoundException::new);
+    Collection collection = collectionRepository.findById(id)
+            .orElseThrow(CollectionNotFoundException::new);
 
-        String currentUsername = getCurrentUsername();
+    String currentUsername = getCurrentUsername();
 
-        if (!collection.isPublic() &&
-                !collection.getUser().getUsername().equals(currentUsername)) {
-            throw new CollectionNotFoundException();
-        }
-
-        CollectionDTO dto = new CollectionDTO();
-        dto.setId(collection.getId());
-        dto.setName(collection.getName());
-        dto.setUsername(collection.getUser().getUsername());
-        dto.setUserId(collection.getUser().getId());
-
-        tweetRepository.findAllByCollectionId(id)
-                .ifPresent(dto::setTweets);
-
-        // 👍 limpio y legible
-        var likes = collection.getLikes();
-
-        dto.setLikesCount(likes.size());
-
-        dto.setLikedByCurrentUser(
-                likes.stream()
-                        .anyMatch(like -> like.getUser().getUsername().equals(currentUsername)));
-
-        return dto;
+    if (!collection.isPublic() &&
+            !collection.getUser().getUsername().equals(currentUsername)) {
+        throw new CollectionNotFoundException();
     }
+
+    CollectionDTO dto = new CollectionDTO();
+    dto.setId(collection.getId());
+    dto.setName(collection.getName());
+    dto.setUsername(collection.getUser().getUsername());
+    dto.setUserId(collection.getUser().getId());
+
+    List<TweetDTO> tweets = tweetRepository.findAllByCollectionId(id);
+    dto.setTweets(tweets);
+
+    var likes = collection.getLikes();
+
+    dto.setLikesCount(likes.size());
+
+    dto.setLikedByCurrentUser(
+            likes.stream()
+                    .anyMatch(like -> like.getUser().getUsername().equals(currentUsername)));
+
+    return dto;
+}
 
     @Transactional
     public VisibilityResponse changeVisibility(long collectionId) {

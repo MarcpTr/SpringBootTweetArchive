@@ -112,6 +112,13 @@ public class CollectionController {
             redirectAttributes.addFlashAttribute("form", form);
 
             return "redirect:/collection/" + collectionId;
+        } else if (result == AddTweetResult.NOT_FOUND) {
+
+            bindingResult.rejectValue("tweetLink", "tweet.notfound");
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.form", bindingResult);
+            redirectAttributes.addFlashAttribute("form", form);
+
+            return "redirect:/collection/" + collectionId;
         }
 
         redirectAttributes.addFlashAttribute("successMessage", "Tweet añadido correctamente");

@@ -21,9 +21,40 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     @Query("SELECT c.id FROM Collection c WHERE c.isPublic = true and c.user.id= :id")
     List<Long> findByIsPublicAndUserId(@Param("id") Long id);
 
-
     Optional<Collection> findByIdAndUserId(Long colectionId, Long userId);
 
+@Query("""
+    SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
+        c.user.username,
+        c.user.id,
+        c.id,
+        c.name,
+        c.isPublic,
+        MAX(tc.embedHtml),
+        COUNT(t.id),
+
+        (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
+
+        CASE
+            WHEN EXISTS (
+                SELECT cl2.id
+                FROM CollectionLike cl2
+                WHERE cl2.collection.id = c.id
+                AND cl2.user.id = :userId
+            )
+            THEN true
+            ELSE false
+        END
+    )
+    FROM Collection c
+    LEFT JOIN Tweet t ON t.collection.id = c.id
+    LEFT JOIN t.content tc
+    WHERE c.id IN :ids
+    GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
+""")
+List<CollectionPreviewDTO> findByIdsWithPreviewTweet(
+        @Param("ids") List<Long> ids,
+        @Param("userId") Long userId);
     @Query("""
                 SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
                     c.user.username,
@@ -31,45 +62,14 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
                     c.id,
                     c.name,
                     c.isPublic,
-                    MAX(t.tweet),
-                    COUNT(t.id),
-
-                    (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
-
-                    CASE
-                        WHEN EXISTS (
-                            SELECT cl2.id
-                            FROM CollectionLike cl2
-                            WHERE cl2.collection.id = c.id
-                            AND cl2.user.id = :userId
-                        )
-                        THEN true
-                        ELSE false
-                    END
-                )
-                FROM Collection c
-                LEFT JOIN Tweet t ON t.collection.id = c.id
-                WHERE c.id IN :ids
-                GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
-            """)
-    List<CollectionPreviewDTO> findByIdsWithPreviewTweet(
-            @Param("ids") List<Long> ids,
-            @Param("userId") Long userId);
-
-    @Query("""
-                SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
-                    c.user.username,
-                    c.user.id,
-                    c.id,
-                    c.name,
-                    c.isPublic,
-                    MAX(t.tweet),
+                    MAX(tc.embedHtml),
                     COUNT(t.id),
                     (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
                     false
                 )
                 FROM Collection c
                 LEFT JOIN Tweet t ON t.collection.id = c.id
+                LEFT JOIN t.content tc
                 WHERE c.id IN :ids
                 GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
             """)
@@ -82,7 +82,7 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
                     c.id,
                     c.name,
                     c.isPublic,
-                    MAX(t.tweet),
+                    MAX(tc.embedHtml),
                     COUNT(t.id),
 
                     (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
@@ -100,6 +100,7 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
                 )
                 FROM Collection c
                 LEFT JOIN Tweet t ON t.collection.id = c.id
+                LEFT JOIN t.content tc
                 WHERE c.isPublic = true
                 GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
                 HAVING COUNT(t.id) > 0
