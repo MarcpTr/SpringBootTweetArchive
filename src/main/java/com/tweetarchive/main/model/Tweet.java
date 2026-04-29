@@ -31,4 +31,8 @@ public class Tweet {
     @JoinColumn(name = "collection_id")
     private Collection collection;
 
+    @ManyToOne
+    @JoinColumn(name = "content_id")
+    private TweetContent content;
+
 }

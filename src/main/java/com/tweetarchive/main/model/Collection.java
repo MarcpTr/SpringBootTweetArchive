@@ -37,5 +37,4 @@ public class Collection {
     private boolean isPublic;
     @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CollectionLike> likes = new HashSet<>();
-
 }
