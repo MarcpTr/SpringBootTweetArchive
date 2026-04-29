@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -72,7 +71,6 @@ public class TweetService {
             throw e;
         }
 
-        // Crear el Tweet (tu entidad actual)
         Tweet tweet = new Tweet();
         tweet.setTweet(tweetLink);
         tweet.setCollection(collection);

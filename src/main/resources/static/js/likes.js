@@ -7,7 +7,6 @@ async function toggleLike(collectionId, button) {
     let liked = button.classList.contains("liked");
     let likes = parseInt(countSpan.textContent || "0", 10);
 
-    // Optimistic UI
     liked = !liked;
     likes += liked ? 1 : -1;
 
@@ -28,7 +27,6 @@ async function toggleLike(collectionId, button) {
     } catch (err) {
         console.error("Error toggle like:", err);
 
-        // rollback UI
         liked = !liked;
         likes += liked ? 1 : -1;
         updateButton(button, liked, likes);
@@ -52,7 +50,6 @@ function updateButton(button, liked, likes) {
         countSpan.textContent = likes;
     }
 
-    // 🔥 NUEVO: feedback visual
     button.classList.add("scale-110");
     setTimeout(() => button.classList.remove("scale-110"), 150);
 }

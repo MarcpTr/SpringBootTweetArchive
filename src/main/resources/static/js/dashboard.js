@@ -1,8 +1,6 @@
-
 const errorMessage = document.getElementById('error-message');
 const successMessage = document.getElementById('success-message');
 
-// helper para no repetir lógica
 function getHeaders() {
     const headers = {
         'Content-Type': 'application/json'
@@ -32,7 +30,6 @@ async function deleteCollection(collectionId) {
 
         console.log(data.message);
 
-        // 🔥 eliminar del DOM sin reload
         const card = document.getElementById("collection-" + collectionId);
         if (card) {
             card.remove();

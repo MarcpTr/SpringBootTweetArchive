@@ -3,13 +3,11 @@ package com.tweetarchive.main.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import com.tweetarchive.main.exceptions.AlreadyLikedException;
 import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.exceptions.UserNotFoundException;
@@ -21,7 +19,6 @@ import com.tweetarchive.main.model.DTO.LikeResponse;
 import com.tweetarchive.main.repository.CollectionLikeRepository;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 

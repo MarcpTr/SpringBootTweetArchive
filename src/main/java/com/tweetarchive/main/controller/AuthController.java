@@ -5,9 +5,7 @@ import com.tweetarchive.main.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import java.util.Map;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,27 +29,6 @@ public class AuthController {
     private final UserService userService;
     private final UserDetailsService userDetailsService;
 
-    /**
-     * Maneja la visualización de la página de inicio de sesión.
-     *
-     * <p>
-     * Este método procesa posibles parámetros de estado provenientes del flujo
-     * de autenticación gestionado por Spring Security:
-     * </p>
-     * <ul>
-     * <li>Si existe el parámetro {@code error}, indica que la autenticación ha
-     * fallado
-     * y se añade un mensaje de error al modelo.</li>
-     * <li>Si existe el parámetro {@code logout}, indica que el usuario ha cerrado
-     * sesión
-     * correctamente y se añade un mensaje informativo al modelo.</li>
-     * </ul>
-     *
-     * @param error  parámetro opcional que indica un fallo en el inicio de sesión
-     * @param logout parámetro opcional que indica un cierre de sesión exitoso
-     * @param model  modelo utilizado para pasar atributos a la vista
-     * @return nombre de la vista de login ({@code "login"})
-     */
     @GetMapping("login")
     public String login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout, Model model) {
@@ -71,50 +48,19 @@ public class AuthController {
         return "register";
     }
 
-    /**
-     * Maneja la solicitud de registro de un nuevo usuario.
-     *
-     * <p>
-     * Flujo del método:
-     * </p>
-     * <ol>
-     * <li>Valida los datos recibidos en el DTO {@code RegisterRequest}.</li>
-     * <li>Si hay errores de validación, retorna la vista de registro.</li>
-     * <li>Delega la creación del usuario a la capa de servicio.</li>
-     * <li>Si el usuario ya existe, añade errores al {@code BindingResult}
-     * asociados al campo correspondiente (username o email).</li>
-     * <li>Si el registro es exitoso, autentica automáticamente al usuario.</li>
-     * <li>Almacena el contexto de seguridad en la sesión HTTP.</li>
-     * <li>Aplica el patrón PRG (Post/Redirect/Get) redirigiendo al inicio.</li>
-     * </ol>
-     *
-     * @param request       objeto con los datos del formulario de registro,
-     *                      validado con {@code @Valid}
-     * @param bindingResult contiene los resultados de la validación y posibles
-     *                      errores
-     * @param httpRequest   request HTTP actual, usado para gestionar la sesión
-     * @return nombre de la vista:
-     *         <ul>
-     *         <li>{@code "register"} si hay errores de validación o de negocio</li>
-     *         <li>{@code "redirect:/"} si el registro es exitoso</li>
-     *         </ul>
-     *
-     */
     @PostMapping("register")
     public String register(
             @Valid @ModelAttribute("registerRequest") RegisterRequest request,
             BindingResult bindingResult, HttpServletRequest httpRequest) {
-        // 1. Validación de negocio SIEMPRE (aunque haya errores de @Valid)
+
         Map<String, String> errors = userService.validateRegister(request);
 
         errors.forEach((field, messageCode) -> bindingResult.rejectValue(field, messageCode));
 
-        // 2. Si hay cualquier error (de ambos tipos), volver al form
         if (bindingResult.hasErrors()) {
             return "register";
         }
 
-        // 3. Guardar
         userService.registerAndLogin(request);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
@@ -130,7 +76,6 @@ public class AuthController {
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                 SecurityContextHolder.getContext());
 
-        // PRG Pattern
         return "redirect:/";
     }
 }

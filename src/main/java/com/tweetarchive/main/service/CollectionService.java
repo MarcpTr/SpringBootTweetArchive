@@ -18,8 +18,6 @@ import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -181,13 +179,11 @@ public CollectionDTO viewCollection(long id) {
                     return new ResourceNotFoundException(errors);
                 });
 
-        // Verificar que pertenece a la colección
         if (!tweet.getCollection().getId().equals(collectionId)) {
             errors.put("Tweet", "No pertenece a la collection");
             throw new ResourceNotFoundException(errors);
         }
 
-        // Verificar ownership
         if (!tweet.getCollection().getUser().getId().equals(userId)) {
             throw new InvalidCredentialsException();
         }

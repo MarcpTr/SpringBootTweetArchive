@@ -2,11 +2,9 @@ package com.tweetarchive.main.repository;
 
 import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.model.DTO.TweetDTO;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
 

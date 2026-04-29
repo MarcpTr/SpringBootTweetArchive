@@ -34,7 +34,6 @@
 
             <div th:utext="${collection.previewEmbedHtml()}"></div>
 
-            <!-- Overlay -->
             <div class="absolute inset-0 z-20 cursor-pointer"
                 th:onclick="|window.location.href='@{/collection/{id}(id=${collection.collectionId()})}'|">
             </div>

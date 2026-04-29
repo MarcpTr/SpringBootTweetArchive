@@ -41,7 +41,6 @@ public class SecurityConfig {
                                 .rememberMe(remember -> remember
                                                 .key("super-secret-key")
                                                 .tokenValiditySeconds(604800).alwaysRemember(false));
-
                 return http.build();
         }
 

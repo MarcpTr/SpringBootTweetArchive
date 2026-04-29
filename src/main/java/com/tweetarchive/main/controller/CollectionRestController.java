@@ -1,8 +1,6 @@
 package com.tweetarchive.main.controller;
 
-import java.util.HashMap;
 import java.util.Map;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,17 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
-import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.model.DTO.ApiResponse;
 import com.tweetarchive.main.model.DTO.LikeResponse;
 import com.tweetarchive.main.model.DTO.VisibilityResponse;
-import com.tweetarchive.main.repository.CollectionRepository;
-import com.tweetarchive.main.repository.TweetRepository;
 import com.tweetarchive.main.service.CollectionLikeService;
 import com.tweetarchive.main.service.CollectionService;
-import com.tweetarchive.main.service.TweetService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,16 +22,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/collection")
 public class CollectionRestController {
     private final CollectionService collectionService;
-    private final TweetService tweetService;
-    private final CollectionRepository collectionRepository;
-    private final TweetRepository tweetRepository;
     private final CollectionLikeService likeService;
 
     @PutMapping("/{collectionId}/visibility")
     public ResponseEntity<ApiResponse<VisibilityResponse>> changeVisibility(@PathVariable long collectionId) {
-
         return ResponseEntity.ok(ApiResponse.ok(collectionService.changeVisibility(collectionId)));
-
     }
 
     @DeleteMapping("/{collectionId}")
@@ -55,7 +43,6 @@ public class CollectionRestController {
             @AuthenticationPrincipal CustomUserDetails user) {
                 collectionService.deleteTweet(collectionId, tweetId);
         return ResponseEntity.noContent().build();
-
     }
 
     @PostMapping("/{id}/like")
@@ -63,7 +50,6 @@ public class CollectionRestController {
             @PathVariable Long id) {
 
         return ResponseEntity.ok(ApiResponse.ok(likeService.like(id)));
-
     }
 
     @DeleteMapping("/{id}/like")

@@ -2,7 +2,6 @@ package com.tweetarchive.main.repository;
 
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.DTO.CollectionPreviewDTO;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,38 +22,39 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
 
     Optional<Collection> findByIdAndUserId(Long colectionId, Long userId);
 
-@Query("""
-    SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
-        c.user.username,
-        c.user.id,
-        c.id,
-        c.name,
-        c.isPublic,
-        MAX(tc.embedHtml),
-        COUNT(t.id),
+    @Query("""
+                SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
+                    c.user.username,
+                    c.user.id,
+                    c.id,
+                    c.name,
+                    c.isPublic,
+                    MAX(tc.embedHtml),
+                    COUNT(t.id),
 
-        (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
+                    (SELECT COUNT(cl) FROM CollectionLike cl WHERE cl.collection.id = c.id),
 
-        CASE
-            WHEN EXISTS (
-                SELECT cl2.id
-                FROM CollectionLike cl2
-                WHERE cl2.collection.id = c.id
-                AND cl2.user.id = :userId
-            )
-            THEN true
-            ELSE false
-        END
-    )
-    FROM Collection c
-    LEFT JOIN Tweet t ON t.collection.id = c.id
-    LEFT JOIN t.content tc
-    WHERE c.id IN :ids
-    GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
-""")
-List<CollectionPreviewDTO> findByIdsWithPreviewTweet(
-        @Param("ids") List<Long> ids,
-        @Param("userId") Long userId);
+                    CASE
+                        WHEN EXISTS (
+                            SELECT cl2.id
+                            FROM CollectionLike cl2
+                            WHERE cl2.collection.id = c.id
+                            AND cl2.user.id = :userId
+                        )
+                        THEN true
+                        ELSE false
+                    END
+                )
+                FROM Collection c
+                LEFT JOIN Tweet t ON t.collection.id = c.id
+                LEFT JOIN t.content tc
+                WHERE c.id IN :ids
+                GROUP BY c.user.username, c.user.id, c.id, c.name, c.isPublic
+            """)
+    List<CollectionPreviewDTO> findByIdsWithPreviewTweet(
+            @Param("ids") List<Long> ids,
+            @Param("userId") Long userId);
+
     @Query("""
                 SELECT new com.tweetarchive.main.model.DTO.CollectionPreviewDTO(
                     c.user.username,

@@ -1,9 +1,7 @@
 package com.tweetarchive.main.repository;
 
 import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.tweetarchive.main.model.CollectionLike;
 
 public interface CollectionLikeRepository extends JpaRepository<CollectionLike, Long> {

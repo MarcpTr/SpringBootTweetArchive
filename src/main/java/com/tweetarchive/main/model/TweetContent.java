@@ -26,7 +26,7 @@ public class TweetContent {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String tweetId; // ID real del tweet
+    private String tweetId;
 
     private String url;
 
