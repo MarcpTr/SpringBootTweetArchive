@@ -17,6 +17,21 @@ import com.tweetarchive.main.service.CollectionLikeService;
 import com.tweetarchive.main.service.CollectionService;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Controlador REST para la gestión de colecciones.
+ *
+ * <p>
+ * Expone endpoints para:
+ * <ul>
+ * <li>Cambiar visibilidad de colecciones</li>
+ * <li>Eliminar colecciones</li>
+ * <li>Eliminar tweets de colecciones</li>
+ * <li>Dar y quitar "like" a colecciones</li>
+ * </ul>
+ *
+ * <p>
+ * Todos los endpoints devuelven respuestas en formato JSON.
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/collection")
@@ -24,11 +39,24 @@ public class CollectionRestController {
     private final CollectionService collectionService;
     private final CollectionLikeService likeService;
 
+    /**
+     * Cambia la visibilidad de una colección (pública/privada).
+     *
+     * @param collectionId identificador de la colección
+     * @return respuesta con el nuevo estado de visibilidad
+     */
     @PutMapping("/{collectionId}/visibility")
     public ResponseEntity<ApiResponse<VisibilityResponse>> changeVisibility(@PathVariable long collectionId) {
         return ResponseEntity.ok(ApiResponse.ok(collectionService.changeVisibility(collectionId)));
     }
 
+    /**
+     * Elimina una colección.
+     *
+     * @param collectionId identificador de la colección
+     * @param user         usuario autenticado
+     * @return respuesta sin contenido (204) si la operación es exitosa
+     */
     @DeleteMapping("/{collectionId}")
     public ResponseEntity<?> deleteCollection(@PathVariable long collectionId,
             @AuthenticationPrincipal CustomUserDetails user) {
@@ -36,27 +64,43 @@ public class CollectionRestController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Elimina un tweet de una colección.
+     *
+     * @param collectionId identificador de la colección
+     * @param tweetId      identificador del tweet
+     * @return respuesta sin contenido (204) si la operación es exitosa
+     */
     @DeleteMapping("/{collectionId}/tweets/{tweetId}")
     public ResponseEntity<Map<String, Object>> removeTweetFromCollection(
             @PathVariable Long collectionId,
-            @PathVariable Long tweetId,
-            @AuthenticationPrincipal CustomUserDetails user) {
-                collectionService.deleteTweet(collectionId, tweetId);
+            @PathVariable Long tweetId) {
+        collectionService.deleteTweet(collectionId, tweetId);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/like")
+    /**
+     * Añade un "like" a una colección.
+     *
+     * @param collectionId identificador de la colección
+     * @return respuesta con el estado actualizado del "like"
+     */
+    @PostMapping("/{collectionId}/like")
     public ResponseEntity<ApiResponse<LikeResponse>> like(
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(ApiResponse.ok(likeService.like(id)));
+            @PathVariable Long collectionId) {
+        return ResponseEntity.ok(ApiResponse.ok(likeService.like(collectionId)));
     }
 
-    @DeleteMapping("/{id}/like")
+    /**
+     * Elimina el "like" de una colección.
+     *
+     * @param collectionId identificador de la colección
+     * @return respuesta sin contenido (204) si la operación es exitosa
+     */
+    @DeleteMapping("/{collectionId}/like")
     public ResponseEntity<Void> unlike(
-            @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails user) {
-        likeService.unlike(user.getId(), id);
+            @PathVariable Long collectionId) {
+        likeService.unlike(collectionId);
         return ResponseEntity.noContent().build();
     }
 }

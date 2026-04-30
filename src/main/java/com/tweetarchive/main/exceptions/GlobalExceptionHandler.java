@@ -24,6 +24,16 @@ public class GlobalExceptionHandler {
             );
     
     }
+    @ExceptionHandler(NotLikedException.class)
+    public Object notLikedException(
+            HttpServletRequest request,
+            Model model) {
+       
+            return ResponseEntity.status(409).body(
+                   ApiResponse.fail("Already liked", "Collection was not liked.", null)
+            );
+    
+    }
     @ExceptionHandler(CollectionNotFoundException.class)
     public Object handleCollectionNotFound(
             HttpServletRequest request,

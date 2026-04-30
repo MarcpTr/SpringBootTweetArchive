@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.tweetarchive.main.exceptions.AlreadyLikedException;
+import com.tweetarchive.main.exceptions.NotLikedException;
 import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.exceptions.UserNotFoundException;
 import com.tweetarchive.main.model.Collection;
@@ -37,6 +38,7 @@ public class CollectionLikeService {
             errors.put("COLLECTION", "LA coleccion no existe.");
             return new ResourceNotFoundException(errors);
         });
+
         long userId = getCurrentUserId();
         if (likeRepo.existsByUserIdAndCollectionId(userId, collectionId)) {
             errors.put("ALREADY LIKED", "El usuario ya ha dado like a este recurso.");
@@ -46,7 +48,6 @@ public class CollectionLikeService {
         User user = userRepo.findById(userId).orElseThrow(() -> {
             return new UserNotFoundException("El usuario no existe");
         });
-
         CollectionLike like = new CollectionLike();
         like.setUser(user);
         like.setCollection(collection);
@@ -57,7 +58,23 @@ public class CollectionLikeService {
     }
 
     @Transactional
-    public void unlike(Long userId, Long collectionId) {
+    public void unlike(Long collectionId) {
+        Map<String, String> errors = new HashMap<>();
+        if (!collectionRepo.existsById(collectionId)) {
+            errors.put("COLLECTION", "LA coleccion no existe.");
+            throw new ResourceNotFoundException(errors);
+        }
+        
+
+        long userId = getCurrentUserId();
+        if (!likeRepo.existsByUserIdAndCollectionId(userId, collectionId)) {
+            errors.put("NOT LIKED", "El usuario no habia dado like a este recurso.");
+            throw new NotLikedException(errors);
+        }
+
+        User user = userRepo.findById(userId).orElseThrow(() -> {
+            return new UserNotFoundException("El usuario no existe");
+        });
         likeRepo.deleteByUserIdAndCollectionId(userId, collectionId);
     }
 
