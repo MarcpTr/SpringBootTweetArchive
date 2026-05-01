@@ -13,7 +13,7 @@
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
-  <div th:replace="fragments/navbar.html  :: navbar"></div>
+  <div th:replace="fragments/navbar.html  :: navbar(active='createCollection')"></div>
   <main class="h-screen flex justify-center items-center w-full p-6 sm:overflow-y-auto">
     <form th:action="@{/collection/create}" th:object="${createCollectionForm}" method="post"
       class="flex flex-col items-center space-y-6 p-8 max-w-md mx-auto bg-white shadow-2xl rounded-3xl border border-gray-200">

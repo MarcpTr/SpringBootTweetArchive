@@ -25,10 +25,7 @@ async function deleteCollection(collectionId) {
             headers: getHeaders()
         });
 
-        const data = await response.json();
-        if (!response.ok) throw data;
-
-        console.log(data.message);
+        if (!response.ok) throw new Error("No se pudo eliminar");
 
         const card = document.getElementById("collection-" + collectionId);
         if (card) {

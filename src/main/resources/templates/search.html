@@ -9,7 +9,7 @@
 
 </head>
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
-<div th:replace="fragments/navbar.html  :: navbar"></div>
+<div th:replace="fragments/navbar.html  :: navbar(active='search')"></div>
 <main class="flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
 <form th:action="@{/search}" method="get" class="flex space-x-4">
     <input type="text" th:value="${query}" name="query"   class=" w-80 bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 "  required="">

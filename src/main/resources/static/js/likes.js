@@ -21,9 +21,8 @@ async function toggleLike(collectionId, button) {
             headers: getHeaders()
         });
 
-        if (!response.ok) {
-            throw new Error("Request failed");
-        }
+        if (!response.ok) throw new Error("Request failed");
+
     } catch (err) {
         console.error("Error toggle like:", err);
 

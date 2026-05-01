@@ -15,7 +15,7 @@
 
 <body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
 
-  <div th:replace="fragments/navbar.html  :: navbar"></div>
+  <div th:replace="fragments/navbar.html  :: navbar(active='register')"></div>
 
   <main class="h-screen flex justify-center items-center w-full p-6 sm:overflow-y-auto">
 
@@ -52,7 +52,7 @@
         </div>
 
         <button type="submit"
-          class="w-full py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-200">
+          class="w-full py-3 mt-6 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-200">
           Create Account
         </button>
 
