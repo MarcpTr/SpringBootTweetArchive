@@ -37,7 +37,8 @@
 
                     <span th:text="${#lists.size(collection.tweets)} + ' tweets'"></span>
 
-                    <button th:disabled="${!#authorization.expression('isAuthenticated()')}" class="like-btn ml-2 px-3 py-1 rounded-full border hover:bg-gray-100 transition"
+                    <button th:disabled="${!#authorization.expression('isAuthenticated()')}"
+                        class="like-btn ml-2 px-3 py-1 rounded-full border hover:bg-gray-100 transition"
                         th:classappend="${collection.likedByCurrentUser} ? 'liked'"
                         th:onclick="|event.stopPropagation(); toggleLike(${collection.id}, this);|">
 
@@ -62,24 +63,24 @@
                 <p th:if="${#fields.hasErrors('tweetLink')}" th:errors="*{tweetLink}"
                     class="text-red-500 text-sm w-full"></p>
 
-                <p th:if="${successMessage}" th:text="${successMessage}" class="text-green-500 text-sm w-full"></p>
+                <p th:if="${successMessage}" id="successMessage" th:text="${successMessage}"
+                    class="text-green-500 text-sm w-full"></p>
 
             </form>
             <ul class="space-y-6">
 
-                <li th:each="tweet : ${collection.tweets}" class="bg-white p-4 rounded-xl shadow relative group">
+                <li th:each="tweet : ${collection.tweets}" class="group flex justify-center">
+                    <div class="relative w-[550px]">
 
-                    <button th:if="${isCreator}" th:onclick="|removeTweet(${collection.id}, ${tweet.id}, this)|"
-                        class="absolute top-2 right-2 group-hover:opacity-100 transition text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                        <button th:if="${isCreator}" th:onclick="|removeTweet(${collection.id}, ${tweet.id}, this)|"
+                            class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition text-red-500 hover:text-red-700 z-10">
+                            <i class="fas fa-trash"></i>
+                        </button>
 
-                    <div class="overflow-hidden rounded-lg">
-                        <div th:utext="${tweet.embedHtml}"></div>
+                        <div class="w-full" th:utext="${tweet.embedHtml}"></div>
+
                     </div>
-
                 </li>
-
                 <li th:if="${collection.tweets == null or #lists.isEmpty(collection.tweets)}"
                     class="text-center text-gray-400">
                     No tweets available
@@ -89,6 +90,14 @@
 
         </div>
     </main>
+    <script>
+        setTimeout(function () {
+            const msg = document.getElementById("successMessage");
+            if (msg) {
+                msg.style.display = "none";
+            }
+        }, 3000); // 3000 ms = 3 segundos
+    </script>
     <script>
         function removeTweet(collectionId, tweetId, button) {
             if (!confirm("¿Seguro que quieres eliminar este tweet?")) {
