@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="UTF-8">
     <title th:text="'Search' + (${query} != null ? ': ' + ${query} : '')"></title>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script defer src="https://analytics.marcpericot.es/script.js" data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script><meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="fragments/umami.html :: umami"></div>
 </head>
-<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
-<div th:replace="fragments/navbar.html  :: navbar(active='search')"></div>
-<main class="flex flex-col w-full p-8 space-y-4 sm:h-screen sm:overflow-y-auto">
-<form th:action="@{/search}" method="get" class="flex space-x-4">
-    <input type="text" th:value="${query}" name="query"   class=" w-80 bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 "  required="">
-    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Search</button>
-</form>
-<ul th:if="${query}"  class="space-y-4">
-    <li class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md " th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
-        <a class="flex items-center h-full w-4/5 text-lg rounded-lg font-semibold text-blue-500  px-4 hover:text-blue-700 hover:bg-gray-200" th:text="${collection.name}" th:href="@{/collection/{id}(id=${collection.id})}" ></a>
-        <a class="flex items-center h-full w-2/5 rounded-lg  text-sm text-gray-600 px-4 hover:text-gray-900 hover:bg-gray-200" th:href="@{/user/{id}(id=${collection.user.id})}" th:text="${collection.user.username}"></a>
-    </li>
-</ul>
-</main>
+
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div th:replace="fragments/navbar.html  :: navbar(active='search')"></div>
+    <main class="p-6 sm:p-10 pb-20 sm:pb-10 sm:ml-20 2xl:ml-64">
+        <form th:action="@{/search}" method="get" class="flex space-x-4">
+            <input type="text" th:value="${query}" name="query"
+                class=" w-80 bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 "
+                required="">
+            <button type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Search</button>
+        </form>
+        <ul th:if="${query}" class="space-y-4">
+            <li class="flex items-center h-14 bg-gray-100 rounded-lg shadow-md "
+                th:if="${collections != null and !#lists.isEmpty(collections)}" th:each="collection : ${collections}">
+                <a class="flex items-center h-full w-4/5 text-lg rounded-lg font-semibold text-blue-500  px-4 hover:text-blue-700 hover:bg-gray-200"
+                    th:text="${collection.name}" th:href="@{/collection/{id}(id=${collection.id})}"></a>
+                <a class="flex items-center h-full w-2/5 rounded-lg  text-sm text-gray-600 px-4 hover:text-gray-900 hover:bg-gray-200"
+                    th:href="@{/user/{id}(id=${collection.user.id})}" th:text="${collection.user.username}"></a>
+            </li>
+        </ul>
+    </main>
 </body>
+
 </html>

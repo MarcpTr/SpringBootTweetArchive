@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <title>Page Not Found</title>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script defer src="https://analytics.marcpericot.es/script.js" data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script><meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <div th:replace="fragments/umami.html :: umami"></div>
 </head>
-<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
-<div th:replace="fragments/navbar.html  :: navbar"></div>
 
-  <h1>404 - Page Not Found</h1>
-  <p>{{errorMessage}}</p>
-  <a href="/">Go back to Home</a>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+  <div th:replace="fragments/navbar.html  :: navbar"></div>
+  <main class="p-6 sm:p-10 pb-20 sm:pb-10 sm:ml-20 2xl:ml-64">
+    <h1>404 - Page Not Found</h1>
+    <p>{{errorMessage}}</p>
+    <a href="/">Go back to Home</a>
+  </main>
 </body>
+
 </html>

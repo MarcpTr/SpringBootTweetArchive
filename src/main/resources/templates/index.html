@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="UTF-8">
     <title>Public Collections</title>
@@ -7,10 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script defer src="https://analytics.marcpericot.es/script.js"
-        data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
-    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script><meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="fragments/umami.html :: umami"></div>
     <style>
         .pointer-events-none {
             pointer-events: none;
@@ -20,30 +20,31 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
 
-<div th:replace="fragments/navbar.html :: navbar(active='home')"></div>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
 
-<main class="flex-1 px-6 sm:px-10 py-8 space-y-10">
+    <div th:replace="fragments/navbar.html :: navbar(active='home')"></div>
 
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <main class="p-6 sm:p-10 pb-20 sm:pb-10 sm:ml-20 2xl:ml-64">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
-        <div>
-            <h1 class="text-3xl font-semibold tracking-tight">Collections</h1>
-            <p class="text-sm text-gray-500">Explore what others are saving</p>
+            <div>
+                <h1 class="text-3xl font-semibold tracking-tight">Collections</h1>
+                <p class="text-sm text-gray-500">Explore what others are saving</p>
+            </div>
+
+            <a th:href="@{/collection/create}"
+                class="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-xl hover:opacity-90 transition shadow">
+                <i class="fas fa-plus"></i>
+                New collection
+            </a>
         </div>
 
-        <a th:href="@{/collection/create}"
-           class="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-xl hover:opacity-90 transition shadow">
-            <i class="fas fa-plus"></i>
-            New collection
-        </a>
-    </div>
+        <ul th:replace="~{fragments/collection-list.html :: collectionList(${collections})}"></ul>
 
-    <ul th:replace="~{fragments/collection-list.html :: collectionList(${collections})}"></ul>
-
-</main>
+    </main>
     <script type="text/javascript" th:src="@{/js/csrf.js}"></script>
     <script type="text/javascript" th:src="@{/js/likes.js}"></script>
 </body>
+
 </html>

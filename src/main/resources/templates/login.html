@@ -8,19 +8,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <script defer src="https://analytics.marcpericot.es/script.js"
-    data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script><meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <div th:replace="fragments/umami.html :: umami"></div>
 </head>
 
-<body class="bg-gray-50 text-gray-900 flex flex-col sm:flex-row min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen">
 
   <div th:replace="fragments/navbar.html  :: navbar(active='login')"></div>
 
-  <main class="h-screen flex justify-center items-center w-full p-6 sm:overflow-y-auto">
-
+  <main class="p-6 sm:p-10 pb-20 sm:pb-10 sm:ml-20 2xl:ml-64">
     <form th:action="@{/login}" method="post"
-       th:class="'flex flex-col items-center space-y-6 p-10 max-w-md mx-auto bg-white shadow-2xl rounded-3xl border border-gray-200'">
+      th:class="'flex flex-col items-center space-y-6 p-10 max-w-md mx-auto bg-white shadow-2xl rounded-3xl border border-gray-200'">
 
       <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Login</h2>
 
@@ -51,7 +49,7 @@
         Login
       </button>
       <p th:if="${error != null}" class="text-red-600 text-sm mt-2 text-center">[[${error}]]</p>
-    <p th:if="${message != null}" class="text-green-600 text-sm mt-2 text-center">[[${message}]]</p>
+      <p th:if="${message != null}" class="text-green-600 text-sm mt-2 text-center">[[${message}]]</p>
       <p class="text-sm text-gray-500 mt-4 text-center">
         Don't have an account?
         <a href="/register" class="text-blue-600 font-medium hover:underline">Register</a>
