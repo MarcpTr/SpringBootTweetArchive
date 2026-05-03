@@ -1,17 +1,26 @@
 package com.tweetarchive.main.exceptions;
 
-import java.util.Map;
+import com.tweetarchive.main.model.enums.ErrorCode;
 
 public class AlreadyLikedException extends RuntimeException {
 
-    private final Map<String, String> errors;
+    private final ErrorCode code;
+    private final Object details;
 
-    public AlreadyLikedException(Map<String, String> errors) {
-        super("Collection already liked");
-        this.errors = errors;
+    public AlreadyLikedException(ErrorCode code) {
+        this(code, null);
     }
 
-    public Map<String, String> getErrors() {
-        return errors;
+    public AlreadyLikedException(ErrorCode code, Object details) {
+        this.code = code;
+        this.details = details;
+    }
+
+    public ErrorCode getCode() {
+        return code;
+    }
+
+    public Object getDetails() {
+        return details;
     }
 }

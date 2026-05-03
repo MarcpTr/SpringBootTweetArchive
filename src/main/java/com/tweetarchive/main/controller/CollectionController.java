@@ -1,6 +1,6 @@
 package com.tweetarchive.main.controller;
 
-import com.tweetarchive.main.exceptions.InvalidCredentialsException;
+import com.tweetarchive.main.exceptions.AuthenticationException;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.DTO.AddTweetToCollectionForm;
 import com.tweetarchive.main.model.DTO.CollectionDTO;
@@ -141,7 +141,6 @@ public class CollectionController {
     public String createCollection(
             @Valid @ModelAttribute("createCollectionForm") CreateCollectionForm form,
             BindingResult bindingResult) {
-
         if (bindingResult.hasErrors()) {
             return "createCollection";
         }
@@ -152,7 +151,7 @@ public class CollectionController {
                     form.isPublicCollection());
             return "redirect:/collection/" + id;
 
-        } catch (InvalidCredentialsException e) {
+        } catch (AuthenticationException e) {
             bindingResult.reject("globalError", "Usuario no autenticado");
             return "createCollection";
         }

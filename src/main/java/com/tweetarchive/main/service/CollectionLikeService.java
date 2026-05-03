@@ -11,12 +11,13 @@ import org.springframework.stereotype.Service;
 import com.tweetarchive.main.exceptions.AlreadyLikedException;
 import com.tweetarchive.main.exceptions.NotLikedException;
 import com.tweetarchive.main.exceptions.ResourceNotFoundException;
-import com.tweetarchive.main.exceptions.UserNotFoundException;
+import com.tweetarchive.main.exceptions.AuthenticationException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CollectionLike;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.User;
 import com.tweetarchive.main.model.DTO.LikeResponse;
+import com.tweetarchive.main.model.enums.ErrorCode;
 import com.tweetarchive.main.repository.CollectionLikeRepository;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.UserRepository;
@@ -33,20 +34,17 @@ public class CollectionLikeService {
 
     @Transactional
     public LikeResponse like(Long collectionId) {
-        Map<String, String> errors = new HashMap<>();
         Collection collection = collectionRepo.findById(collectionId).orElseThrow(() -> {
-            errors.put("COLLECTION", "LA coleccion no existe.");
-            return new ResourceNotFoundException(errors);
+            return new ResourceNotFoundException(ErrorCode.COLLECTION_NOT_FOUND);
         });
 
         long userId = getCurrentUserId();
         if (likeRepo.existsByUserIdAndCollectionId(userId, collectionId)) {
-            errors.put("ALREADY LIKED", "El usuario ya ha dado like a este recurso.");
-            throw new AlreadyLikedException(errors);
+            throw new AlreadyLikedException(ErrorCode.COLLECTION_ALREADY_LIKED);
         }
 
         User user = userRepo.findById(userId).orElseThrow(() -> {
-            return new UserNotFoundException("El usuario no existe");
+            return new AuthenticationException(ErrorCode.AUTHENTICATED_ERROR);
         });
         CollectionLike like = new CollectionLike();
         like.setUser(user);
@@ -59,21 +57,18 @@ public class CollectionLikeService {
 
     @Transactional
     public void unlike(Long collectionId) {
-        Map<String, String> errors = new HashMap<>();
         if (!collectionRepo.existsById(collectionId)) {
-            errors.put("COLLECTION", "LA coleccion no existe.");
-            throw new ResourceNotFoundException(errors);
+            throw new ResourceNotFoundException(ErrorCode.COLLECTION_NOT_FOUND);
         }
         
 
         long userId = getCurrentUserId();
         if (!likeRepo.existsByUserIdAndCollectionId(userId, collectionId)) {
-            errors.put("NOT LIKED", "El usuario no habia dado like a este recurso.");
-            throw new NotLikedException(errors);
+            throw new NotLikedException(ErrorCode.COLLECTION_NOT_LIKED);
         }
 
         User user = userRepo.findById(userId).orElseThrow(() -> {
-            return new UserNotFoundException("El usuario no existe");
+            return new AuthenticationException(ErrorCode.AUTHENTICATED_ERROR);
         });
         likeRepo.deleteByUserIdAndCollectionId(userId, collectionId);
     }

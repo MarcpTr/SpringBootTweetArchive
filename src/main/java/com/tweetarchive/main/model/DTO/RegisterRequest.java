@@ -16,6 +16,6 @@ public class RegisterRequest {
   @NotBlank(message = "{password.required}")
   @Size(min = 6, max = 20, message = "{password.size}")
   private String password;
-  @Email
+  @Email(message = "{email.invalid}")
   private String email;
 }

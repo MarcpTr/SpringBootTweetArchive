@@ -14,7 +14,7 @@ import lombok.Setter;
 public class CreateCollectionForm {
         
         @NotBlank(message = "El nombre es obligatorio") 
-        @Size(max = 200, message = "Máximo 20 caracteres") 
+        @Size(max = 20, message = "Máximo 20 caracteres") 
         String collectionName;
         boolean publicCollection;
 }

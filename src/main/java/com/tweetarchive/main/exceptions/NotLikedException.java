@@ -2,16 +2,27 @@ package com.tweetarchive.main.exceptions;
 
 import java.util.Map;
 
+import com.tweetarchive.main.model.enums.ErrorCode;
+
 public class NotLikedException extends RuntimeException {
 
-    private final Map<String, String> errors;
+   private final ErrorCode code;
+    private final Object details;
 
-    public NotLikedException(Map<String, String> errors) {
-        super("Collection was not liked");
-        this.errors = errors;
+    public NotLikedException(ErrorCode code) {
+        this(code, null);
     }
 
-    public Map<String, String> getErrors() {
-        return errors;
+    public NotLikedException(ErrorCode code, Object details) {
+        this.code = code;
+        this.details = details;
+    }
+
+    public ErrorCode getCode() {
+        return code;
+    }
+
+    public Object getDetails() {
+        return details;
     }
 }

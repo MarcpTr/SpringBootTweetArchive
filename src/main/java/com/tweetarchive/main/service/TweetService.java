@@ -1,12 +1,13 @@
 package com.tweetarchive.main.service;
 
-import com.tweetarchive.main.exceptions.CollectionNotFoundException;
-import com.tweetarchive.main.exceptions.InvalidCredentialsException;
+import com.tweetarchive.main.exceptions.AuthenticationException;
+import com.tweetarchive.main.exceptions.ResourceNotFoundException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.Tweet;
 import com.tweetarchive.main.model.TweetContent;
 import com.tweetarchive.main.model.enums.AddTweetResult;
+import com.tweetarchive.main.model.enums.ErrorCode;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetContentRepository;
 import com.tweetarchive.main.repository.TweetRepository;
@@ -35,7 +36,9 @@ public class TweetService {
     public AddTweetResult addTweetToCollection(long collectionId, String tweetLink) {
         Collection collection = collectionRepository
                 .findByIdAndUserId(collectionId, getUserId())
-                .orElseThrow(CollectionNotFoundException::new);
+                .orElseThrow(() -> {
+                    return new ResourceNotFoundException(ErrorCode.COLLECTION_NOT_FOUND);
+                });
 
         if (tweetRepository.findByTweetAndCollectionId(tweetLink, collectionId).isPresent()) {
             return AddTweetResult.ALREADY_EXISTS;
@@ -123,6 +126,6 @@ public class TweetService {
             return user.getId();
         }
 
-        throw new InvalidCredentialsException();
+        throw new AuthenticationException(ErrorCode.AUTHENTICATED_ERROR);
     }
 }

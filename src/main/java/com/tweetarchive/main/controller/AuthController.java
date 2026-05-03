@@ -60,11 +60,12 @@ public class AuthController {
     public String login(@RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout, Model model) {
         if (error != null) {
-            model.addAttribute("error", "Usuario o contraseña incorrectos");
+            model.addAttribute("error", "login.error" + //
+                    "");
         }
 
         if (logout != null) {
-            model.addAttribute("message", "Sesión cerrada correctamente");
+            model.addAttribute("message", "logout");
         }
         return "login";
     }

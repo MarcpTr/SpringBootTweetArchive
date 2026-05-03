@@ -48,8 +48,8 @@
         class="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
         Login
       </button>
-      <p th:if="${error != null}" class="text-red-600 text-sm mt-2 text-center">[[${error}]]</p>
-      <p th:if="${message != null}" class="text-green-600 text-sm mt-2 text-center">[[${message}]]</p>
+      <p th:if="${error != null}" class="text-red-600 text-sm mt-2 text-center" th:text="#{${error}}"></p>
+      <p th:if="${message != null}" class="text-green-600 text-sm mt-2 text-center" th:text="#{${message}}"></p>
       <p class="text-sm text-gray-500 mt-4 text-center">
         Don't have an account?
         <a href="/register" class="text-blue-600 font-medium hover:underline">Register</a>

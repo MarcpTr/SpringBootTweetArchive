@@ -1,19 +1,16 @@
 package com.tweetarchive.main.exceptions;
 
-import java.util.Map;
-
 import com.tweetarchive.main.model.enums.ErrorCode;
 
-public class ResourceNotFoundException extends RuntimeException {
-
-    private final ErrorCode code;
+public class AuthenticationException  extends RuntimeException {
+  private final ErrorCode code;
     private final Object details;
 
-    public ResourceNotFoundException(ErrorCode code) {
+    public AuthenticationException(ErrorCode code) {
         this(code, null);
     }
 
-    public ResourceNotFoundException(ErrorCode code, Object details) {
+    public AuthenticationException(ErrorCode code, Object details) {
         this.code = code;
         this.details = details;
     }

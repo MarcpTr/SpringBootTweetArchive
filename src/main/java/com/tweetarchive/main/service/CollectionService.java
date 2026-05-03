@@ -1,10 +1,8 @@
 package com.tweetarchive.main.service;
 
-import com.tweetarchive.main.exceptions.CollectionNotFoundException;
+import com.tweetarchive.main.exceptions.AuthenticationException;
 import com.tweetarchive.main.exceptions.ForbiddenOperationException;
-import com.tweetarchive.main.exceptions.InvalidCredentialsException;
 import com.tweetarchive.main.exceptions.ResourceNotFoundException;
-import com.tweetarchive.main.exceptions.UserNotFoundException;
 import com.tweetarchive.main.model.Collection;
 import com.tweetarchive.main.model.CustomUserDetails;
 import com.tweetarchive.main.model.Tweet;
@@ -13,6 +11,7 @@ import com.tweetarchive.main.model.DTO.CollectionDTO;
 import com.tweetarchive.main.model.DTO.CollectionPreviewDTO;
 import com.tweetarchive.main.model.DTO.TweetDTO;
 import com.tweetarchive.main.model.DTO.VisibilityResponse;
+import com.tweetarchive.main.model.enums.ErrorCode;
 import com.tweetarchive.main.repository.CollectionLikeRepository;
 import com.tweetarchive.main.repository.CollectionRepository;
 import com.tweetarchive.main.repository.TweetRepository;
@@ -49,7 +48,7 @@ public class CollectionService {
     public List<CollectionPreviewDTO> findUserCollections(String username) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_NOT_FOUND));
 
         List<Long> collectionIds = collectionRepository.findByIsPublicAndUserId(user.getId());
 
@@ -80,37 +79,39 @@ public class CollectionService {
 
     }
 
-public CollectionDTO viewCollection(long id) {
+    public CollectionDTO viewCollection(long id) {
 
-    Collection collection = collectionRepository.findById(id)
-            .orElseThrow(CollectionNotFoundException::new);
+        Collection collection = collectionRepository.findById(id)
+                .orElseThrow(() -> {
+                    return new ResourceNotFoundException(ErrorCode.COLLECTION_NOT_FOUND);
+                });
 
-    String currentUsername = getCurrentUsername();
+        String currentUsername = getCurrentUsername();
 
-    if (!collection.isPublic() &&
-            !collection.getUser().getUsername().equals(currentUsername)) {
-        throw new CollectionNotFoundException();
+        if (!collection.isPublic() &&
+                !collection.getUser().getUsername().equals(currentUsername)) {
+            throw new ResourceNotFoundException(ErrorCode.COLLECTION_NOT_FOUND);
+        }
+
+        CollectionDTO dto = new CollectionDTO();
+        dto.setId(collection.getId());
+        dto.setName(collection.getName());
+        dto.setUsername(collection.getUser().getUsername());
+        dto.setUserId(collection.getUser().getId());
+
+        List<TweetDTO> tweets = tweetRepository.findAllByCollectionId(id);
+        dto.setTweets(tweets);
+
+        var likes = collection.getLikes();
+
+        dto.setLikesCount(likes.size());
+
+        dto.setLikedByCurrentUser(
+                likes.stream()
+                        .anyMatch(like -> like.getUser().getUsername().equals(currentUsername)));
+
+        return dto;
     }
-
-    CollectionDTO dto = new CollectionDTO();
-    dto.setId(collection.getId());
-    dto.setName(collection.getName());
-    dto.setUsername(collection.getUser().getUsername());
-    dto.setUserId(collection.getUser().getId());
-
-    List<TweetDTO> tweets = tweetRepository.findAllByCollectionId(id);
-    dto.setTweets(tweets);
-
-    var likes = collection.getLikes();
-
-    dto.setLikesCount(likes.size());
-
-    dto.setLikedByCurrentUser(
-            likes.stream()
-                    .anyMatch(like -> like.getUser().getUsername().equals(currentUsername)));
-
-    return dto;
-}
 
     @Transactional
     public VisibilityResponse changeVisibility(long collectionId) {
@@ -124,7 +125,9 @@ public CollectionDTO viewCollection(long id) {
         Long userId = user.getId();
 
         Collection collection = collectionRepository.findById(collectionId)
-                .orElseThrow(CollectionNotFoundException::new);
+                .orElseThrow(() -> {
+                    return new ResourceNotFoundException(ErrorCode.COLLECTION_NOT_FOUND);
+                });
 
         if (!collection.getUser().getId().equals(userId)) {
             throw new ForbiddenOperationException("You are not the owner of this collection");
@@ -140,7 +143,7 @@ public CollectionDTO viewCollection(long id) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!(principal instanceof CustomUserDetails)) {
-            throw new InvalidCredentialsException();
+            throw new AuthenticationException(ErrorCode.AUTHENTICATED_ERROR);
         }
 
         Long userId = ((CustomUserDetails) principal).getId();
@@ -171,21 +174,18 @@ public CollectionDTO viewCollection(long id) {
 
     @Transactional
     public void deleteTweet(Long collectionId, Long tweetId) {
-        Map<String, String> errors = new HashMap<>();
         Long userId = getCurrentUserId();
         Tweet tweet = tweetRepository.findById(tweetId)
                 .orElseThrow(() -> {
-                    errors.put("Tweet", "El tweet no existe.");
-                    return new ResourceNotFoundException(errors);
+                    return new ResourceNotFoundException(ErrorCode.TWEET_DOESNT_EXIST);
                 });
 
         if (!tweet.getCollection().getId().equals(collectionId)) {
-            errors.put("Tweet", "No pertenece a la collection");
-            throw new ResourceNotFoundException(errors);
+            throw new ResourceNotFoundException(ErrorCode.TWEET_NOT_BELONG_THIS_COLLECTION);
         }
 
         if (!tweet.getCollection().getUser().getId().equals(userId)) {
-            throw new InvalidCredentialsException();
+            throw new AuthenticationException(ErrorCode.AUTHENTICATED_ERROR);
         }
 
         tweetRepository.delete(tweet);
@@ -193,12 +193,9 @@ public CollectionDTO viewCollection(long id) {
 
     @Transactional
     public void deleteCollection(Long collectionId) {
-        Map<String, String> errors = new HashMap<>();
-
         Collection collection = collectionRepository
                 .findByIdAndUserId(collectionId, getCurrentUserId()).orElseThrow(() -> {
-                    errors.put("COLLECTION", "LA coleccion no existe.");
-                    return new ResourceNotFoundException(errors);
+                    return new ResourceNotFoundException(ErrorCode.COLLECTION_NOT_FOUND);
                 });
 
         tweetRepository.deleteByCollectionId(collectionId);

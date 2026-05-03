@@ -9,7 +9,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script defer src="https://analytics.marcpericot.es/script.js"
         data-website-id="0624f2fd-d168-4148-a9e6-55cf35f47416"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
 
@@ -28,13 +28,10 @@
             </h1>
 
             <h2 class="text-xl font-semibold text-gray-700 mb-2">
-                Página no encontrada
+                Page not found
             </h2>
 
-            <p class="text-gray-500 mb-6">
-                El recurso que buscas no existe o fue movido.
-            </p>
-            <p th:text="${message}"></p>
+            <p th:text="${error}" class="text-gray-500 mb-6"></p>
             <a th:href="@{/}"
                 class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
                 Volver al inicio
